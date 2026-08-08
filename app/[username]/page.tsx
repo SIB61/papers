@@ -1,0 +1,97 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowUpRight, PenLine } from "lucide-react";
+import { desc, eq } from "drizzle-orm";
+import { db } from "@/lib/db";
+import { posts, users } from "@/lib/db/schema";
+import { relativeTime } from "@/lib/format";
+import { getSessionUser } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
+
+export default async function UserHomePage({ params }: PageProps<"/[username]">) {
+  const { username } = await params;
+
+  const user = (
+    await db.select().from(users).where(eq(users.username, username)).limit(1)
+  )[0];
+  if (!user) notFound();
+
+  const published = await db
+    .select()
+    .from(posts)
+    .where(eq(posts.userId, user.id))
+    .orderBy(desc(posts.updatedAt));
+
+  const session = await getSessionUser();
+  const isOwner = session?.id === user.id;
+
+  return (
+    <main className="mx-auto w-full max-w-4xl flex-1 px-5">
+      <section className="animate-page-in py-16 sm:py-24">
+        <p className="font-mono text-sm text-muted-foreground">/{user.username}</p>
+        <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
+          {user.name || user.username}
+        </h1>
+        <p className="mt-4 max-w-md text-muted-foreground">
+          {published.filter((p) => p.status === "published").length} published
+          {published.some((p) => p.status === "draft") ? " · some drafts in progress" : ""}
+        </p>
+        {isOwner && (
+          <Link
+            href="/write"
+            className="mt-6 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+          >
+            <PenLine className="size-4" />
+            Write
+          </Link>
+        )}
+      </section>
+
+      <section className="animate-page-in pb-24" style={{ animationDelay: "120ms" }}>
+        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          Index
+        </h2>
+        {published.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">
+            Nothing here yet.{" "}
+            {isOwner ? (
+              <Link href="/write" className="underline underline-offset-4 hover:text-foreground">
+                Write the first page
+              </Link>
+            ) : (
+              <span>Check back soon.</span>
+            )}
+          </div>
+        ) : (
+          <ul className="mt-4 divide-y divide-border border-y border-border">
+            {published
+              .filter((p) => p.status === "published")
+              .map((post) => (
+                <li key={post.id}>
+                  <Link
+                    href={`/${user.username}/${post.slug}`}
+                    className="group flex items-baseline justify-between gap-4 py-4 transition-colors"
+                  >
+                    <span className="font-mono text-sm text-muted-foreground">
+                      /{user.username}/{post.slug}
+                    </span>
+                    <span className="flex flex-1 items-center gap-2">
+                      <span className="h-px flex-1 border-b border-dotted border-border transition-colors group-hover:border-muted-foreground/40" />
+                      <span className="font-medium group-hover:underline underline-offset-4">
+                        {post.title}
+                      </span>
+                      <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </span>
+                    <span className="hidden shrink-0 text-xs text-muted-foreground sm:block">
+                      {relativeTime(post.updatedAt)}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        )}
+      </section>
+    </main>
+  );
+}

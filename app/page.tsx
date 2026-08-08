@@ -1,69 +1,156 @@
-import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Feather,
+  LayoutTemplate,
+  Palette,
+  PenLine,
+  ShieldCheck,
+  Split,
+} from "lucide-react";
+import { LandingHeader } from "@/components/landing-header";
+import { Hero } from "@/components/hero";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const FEATURES = [
+  {
+    icon: Feather,
+    title: "Markdown is the only format",
+    body: "Write in plain markdown. Every file becomes its own page — no CMS, no dashboards, just a path.",
+  },
+  {
+    icon: Palette,
+    title: "White-label by default",
+    body: "The header is yours, the content is yours. The only paper is the quiet little “powered by papers.io” in the footer.",
+  },
+  {
+    icon: Split,
+    title: "Your own default theme",
+    body: "Pick the look visitors see first. They can switch, you set the tone.",
+  },
+  {
+    icon: PenLine,
+    title: "Everything is typed",
+    body: "Drafts, notes and templates all live in one desk. Publish a page and it lands at a clean, shareable URL.",
+  },
+  {
+    icon: LayoutTemplate,
+    title: "Templates that copy",
+    body: "Keep a template page and duplicate it into new posts — a skeleton for starters, essays and case studies.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Private until you publish",
+    body: "Drafts are yours alone. Only pages you mark Published are visible to the public.",
+  },
+];
+
+const USES = [
+  { path: "/you/cv", title: "Career pages", body: "Your CV, always one markdown file." },
+  { path: "/you/ideas", title: "Notes & ideas", body: "Work through thoughts in the open." },
+  { path: "/you/projects", title: "Project journals", body: "Log progress without a dashboard." },
+  { path: "/you/reads", title: "Reading lists", body: "A living bibliography of things you read." },
+];
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      <LandingHeader />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-5">
+        <section className="animate-page-in py-20 sm:py-28">
+          <Hero />
+          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+            A markdown blog platform that puts your name front and center. Write in
+            plain text, publish at your own path, and ship a site that looks like
+            you — not like the tool underneath.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:opacity-85 active:translate-y-px"
+            >
+              Start your blog
+              <ArrowRight className="size-4" />
+            </Link>
+            <a
+              href="#features"
+              className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+            >
+              Why papers?
+            </a>
+          </div>
+        </section>
+
+        <section id="features" className="animate-page-in border-t border-border py-20">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Features
+          </h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f) => (
+              <div
+                key={f.title}
+                className="rounded-xl border border-border p-6 transition-colors hover:bg-muted/40"
+              >
+                <f.icon className="size-5" />
+                <h3 className="mt-3 font-semibold">{f.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                  {f.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-t border-border py-20">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            People write
+          </h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            {USES.map((u) => (
+              <a
+                key={u.title}
+                href={`/${u.path}`}
+                className="group flex items-start justify-between gap-4 rounded-xl border border-border p-6 transition-colors hover:bg-muted/40"
+              >
+                <div>
+                  <p className="font-mono text-xs text-muted-foreground">{u.path}</p>
+                  <h3 className="mt-1.5 font-semibold">{u.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{u.body}</p>
+                </div>
+                <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-t border-border py-20 text-center">
+          <p className="font-mono text-sm text-muted-foreground">
+            you write <span className="text-foreground">/username/anything</span>
+          </p>
+          <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
+            Your site, your name, your markdown.
+          </h2>
+          <Link
+            href="/login"
+            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:opacity-85 active:translate-y-px"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            <Feather className="size-4" />
+            Sign in with Google
+          </Link>
+        </section>
       </main>
-    </div>
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-5 py-6 text-xs text-muted-foreground">
+          <span>papers · a markdown blog</span>
+          <span className="flex items-center gap-4">
+            <span>
+              You get the header. We get the favicon-free footer.
+            </span>
+            <span>{new Date().getFullYear()}</span>
+          </span>
+        </div>
+      </footer>
+    </>
   );
 }
