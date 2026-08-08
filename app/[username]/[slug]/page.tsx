@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { and, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { posts, users } from "@/lib/db/schema";
+import { comments, postLikes, posts, users } from "@/lib/db/schema";
 import { getSessionUser } from "@/lib/auth";
 import Markdown from "@/components/markdown";
 import { DownloadPdfButton } from "@/components/download-pdf-button";
+import { PostInteractions } from "@/components/post-interactions";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,42 @@ export default async function PostPage({
     if (!session || post.userId !== session.id) notFound();
   }
   const isOwner = session?.id === post.userId;
+
+  const [{ value: likeCount }] = await db
+    .select({ value: count() })
+    .from(postLikes)
+    .where(eq(postLikes.postId, post.id));
+
+  const [myLike] = session
+    ? await db
+        .select({ id: postLikes.id })
+        .from(postLikes)
+        .where(and(eq(postLikes.postId, post.id), eq(postLikes.userId, session.id)))
+        .limit(1)
+    : [undefined];
+
+  const commentRows = await db
+    .select({
+      id: comments.id,
+      content: comments.content,
+      createdAt: comments.createdAt,
+      userId: comments.userId,
+      name: users.name,
+      username: users.username,
+      image: users.image,
+    })
+    .from(comments)
+    .innerJoin(users, eq(comments.userId, users.id))
+    .where(eq(comments.postId, post.id))
+    .orderBy(desc(comments.createdAt))
+    .limit(200);
+
+  const initialComments = commentRows.map((row) => ({
+    id: row.id,
+    content: row.content,
+    createdAt: row.createdAt,
+    author: { id: row.userId, name: row.name, username: row.username, image: row.image },
+  }));
 
   return (
     <>
@@ -94,6 +131,24 @@ export default async function PostPage({
             )}
           </footer>
         </article>
+
+        <PostInteractions
+          postId={post.id}
+          isOwner={isOwner}
+          initialLikeCount={Number(likeCount)}
+          initialLiked={Boolean(myLike)}
+          initialComments={initialComments}
+          currentUser={
+            session
+              ? {
+                  id: session.id,
+                  name: session.name,
+                  username: session.username,
+                  image: session.image,
+                }
+              : null
+          }
+        />
       </main>
     </>
   );

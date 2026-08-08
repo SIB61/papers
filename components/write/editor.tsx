@@ -30,8 +30,9 @@ import {
   Strikethrough,
   Trash2,
   Upload,
+  Sparkles,
 } from "lucide-react";
-import { deletePost, updatePost } from "@/app/actions";
+import { beautifyContent, deletePost, updatePost } from "@/app/actions";
 import Markdown from "@/components/markdown";
 import { type PostStatus } from "@/lib/db/schema";
 import { normalizeSlug } from "@/lib/slug";
@@ -93,6 +94,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
   const [lastSaved, setLastSaved] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [beautifying, setBeautifying] = useState(false);
 
   const titleAuto = useRef(post.slug.startsWith("draft-"));
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -134,6 +136,21 @@ export function Editor({ post, username }: { post: Post; username: string }) {
       void deletePost(post.id);
     }
   }, [post.id]);
+
+  const beautify = useCallback(async () => {
+    if (beautifying) return;
+    setBeautifying(true);
+    setError(null);
+    try {
+      const result = await beautifyContent(content);
+      setContent(result.content);
+      setDirty(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to beautify");
+    } finally {
+      setBeautifying(false);
+    }
+  }, [beautifying, content]);
 
   const save = useCallback(async () => {
     setSaving(true);
@@ -408,6 +425,21 @@ export function Editor({ post, username }: { post: Post; username: string }) {
               )}
               <span className="hidden sm:inline">Image</span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => void beautify()}
+              disabled={beautifying || !content.trim()}
+              title="Beautify with Gemini — restyles the presentation without changing the content"
+              className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-2.5 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40"
+            >
+              {beautifying ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Sparkles className="size-3.5" />
+              )}
+              <span className="hidden sm:inline">Beautify</span>
+            </button>
           </div>
         </div>
 
@@ -437,7 +469,9 @@ export function Editor({ post, username }: { post: Post; username: string }) {
           )}
           {mode !== "write" && (
             <div className="min-h-[60vh] overflow-y-auto border-t border-border p-5 lg:border-l lg:border-t-0">
-              <Markdown>{deferredContent}</Markdown>
+              <div className="mx-auto w-full max-w-[680px]">
+                <Markdown>{deferredContent}</Markdown>
+              </div>
             </div>
           )}
         </div>

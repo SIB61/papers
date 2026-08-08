@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
@@ -7,6 +6,7 @@ import { users } from "@/lib/db/schema";
 import { isThemeId, defaultTheme } from "@/lib/themes";
 import { TenantHeader } from "@/components/tenant-header";
 import { TenantFooter } from "@/components/tenant-footer";
+import { TailwindCdn } from "@/components/tailwind-cdn";
 
 export const dynamic = "force-dynamic";
 
@@ -29,21 +29,7 @@ export default async function UsernameLayout({
           __html: `(function(){try{if(!localStorage.getItem("theme")){document.documentElement.setAttribute("data-theme","${theme}");}}catch(e){}})();`,
         }}
       />
-      <Script
-        src="https://cdn.tailwindcss.com"
-        strategy="afterInteractive"
-        onLoad={() => {
-          const tailwindGlobal = window as unknown as {
-            tailwind?: { config?: unknown };
-          };
-          if (tailwindGlobal.tailwind) {
-            tailwindGlobal.tailwind.config = {
-              corePlugins: { preflight: false },
-              important: ".blog-body",
-            };
-          }
-        }}
-      />
+      <TailwindCdn />
       <TenantHeader user={user} />
       {children}
       <TenantFooter />

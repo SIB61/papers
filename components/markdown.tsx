@@ -4,6 +4,8 @@ import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSanitize from "rehype-sanitize";
 import { defaultSchema, type Schema } from "hast-util-sanitize";
+import { normalizeRawHtmlBlocks } from "@/lib/markdown-html";
+import { rehypeInlineMarkdown } from "@/components/rehype-inline-markdown";
 
 // Defaults follow GitHub-style sanitation: they strip <script>, event handler
 // attributes, `javascript:` URLs, unknown tags, and restrict classes. We extend
@@ -47,11 +49,12 @@ export default function Markdown({ children }: { children: string }) {
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[
           rehypeRaw,
+          rehypeInlineMarkdown,
           [rehypeSanitize, schema],
           [rehypeHighlight, { detect: true, ignoreMissing: true }],
         ]}
       >
-        {children}
+        {normalizeRawHtmlBlocks(children)}
       </ReactMarkdown>
     </div>
   );

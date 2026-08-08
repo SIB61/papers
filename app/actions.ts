@@ -2,10 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { and, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { posts, users, type PostStatus } from "@/lib/db/schema";
-import { getSessionUser } from "@/lib/auth";
+import {
+  comments,
+  postLikes,
+  posts,
+  users,
+  type PostStatus,
+} from "@/lib/db/schema";
+import { getSessionUser, type SessionUser } from "@/lib/auth";
+import { beautifyMarkdown } from "@/lib/gemini";
 import { isThemeId } from "@/lib/themes";
 import { normalizeSlug } from "@/lib/slug";
 
@@ -18,6 +25,179 @@ export interface PostInput {
 
 function canEdit(userId: number, ownerId: number): boolean {
   return userId === ownerId;
+}
+
+export interface CommentWithAuthor {
+  id: number;
+  content: string;
+  createdAt: Date;
+  author: {
+    id: number;
+    name: string;
+    username: string;
+    image: string;
+  };
+}
+
+async function getPostInteractionRow(postId: number) {
+  return (
+    await db
+      .select({
+        id: posts.id,
+        slug: posts.slug,
+        status: posts.status,
+        ownerId: posts.userId,
+        username: users.username,
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.id, postId))
+      .limit(1)
+  )[0];
+}
+
+async function canInteract(
+  postId: number,
+  session: SessionUser,
+): Promise<{ ok: boolean; username: string; slug: string } | null> {
+  const post = await getPostInteractionRow(postId);
+  if (!post) return null;
+  if (post.status === "published" || post.ownerId === session.id) {
+    return { ok: true, username: post.username, slug: post.slug };
+  }
+  return { ok: false, username: post.username, slug: post.slug };
+}
+
+function toCommentWithAuthor(
+  comment: typeof comments.$inferSelect,
+  author: { id: number; name: string; username: string; image: string },
+): CommentWithAuthor {
+  return {
+    id: comment.id,
+    content: comment.content,
+    createdAt: comment.createdAt,
+    author,
+  };
+}
+
+export async function toggleLike(postId: number) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  const post = await canInteract(postId, session);
+  if (!post) throw new Error("Post not found");
+  if (!post.ok) throw new Error("Post is not public yet");
+
+  const existing = await db
+    .select({ id: postLikes.id })
+    .from(postLikes)
+    .where(and(eq(postLikes.postId, postId), eq(postLikes.userId, session.id)))
+    .limit(1);
+
+  let liked: boolean;
+  if (existing[0]) {
+    await db.delete(postLikes).where(eq(postLikes.id, existing[0].id));
+    liked = false;
+  } else {
+    await db.insert(postLikes).values({ postId, userId: session.id });
+    liked = true;
+  }
+
+  const [{ value: likeCount }] = await db
+    .select({ value: count() })
+    .from(postLikes)
+    .where(eq(postLikes.postId, postId));
+
+  revalidatePath(`/${post.username}/${post.slug}`);
+  return { liked, likeCount: Number(likeCount) };
+}
+
+export async function addComment(postId: number, content: string) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  const post = await canInteract(postId, session);
+  if (!post) throw new Error("Post not found");
+  if (!post.ok) throw new Error("Post is not public yet");
+
+  const trimmed = content.trim();
+  if (!trimmed) throw new Error("Comment cannot be empty");
+  if (trimmed.length > 2000) throw new Error("Comment is too long");
+
+  const [comment] = await db
+    .insert(comments)
+    .values({ postId, userId: session.id, content: trimmed })
+    .returning();
+
+  revalidatePath(`/${post.username}/${post.slug}`);
+  return {
+    comment: toCommentWithAuthor(comment, {
+      id: session.id,
+      name: session.name,
+      username: session.username,
+      image: session.image,
+    }),
+  };
+}
+
+export async function deleteComment(commentId: number) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  const [comment] = await db
+    .select({ id: comments.id, postId: comments.postId, userId: comments.userId })
+    .from(comments)
+    .where(eq(comments.id, commentId))
+    .limit(1);
+  if (!comment) throw new Error("Comment not found");
+
+  const post = await getPostInteractionRow(comment.postId);
+  if (!post) throw new Error("Post not found");
+  if (comment.userId !== session.id && post.ownerId !== session.id) {
+    throw new Error("You can only delete your own comments");
+  }
+
+  await db.delete(comments).where(eq(comments.id, commentId));
+
+  revalidatePath(`/${post.username}/${post.slug}`);
+  return { ok: true };
+}
+
+export async function beautifyContent(content: string) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  if (!content || !content.trim()) {
+    throw new Error("Write some content before beautifying");
+  }
+
+  const beautified = await beautifyMarkdown(content);
+  return { content: beautified };
+}
+
+export async function getPostComments(postId: number) {
+  const rows = await db
+    .select({
+      id: comments.id,
+      content: comments.content,
+      createdAt: comments.createdAt,
+      userId: comments.userId,
+      name: users.name,
+      username: users.username,
+      image: users.image,
+    })
+    .from(comments)
+    .innerJoin(users, eq(comments.userId, users.id))
+    .where(eq(comments.postId, postId))
+    .orderBy(desc(comments.createdAt))
+    .limit(200);
+
+  return rows.map((row) =>
+    toCommentWithAuthor(
+      { id: row.id, content: row.content, createdAt: row.createdAt } as typeof comments.$inferSelect,
+      { id: row.userId, name: row.name, username: row.username, image: row.image },
+    ),
+  );
 }
 
 export async function createPost() {
