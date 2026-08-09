@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs",
+    "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
