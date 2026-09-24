@@ -46,21 +46,23 @@ export default async function SettingsPage() {
             . This is the theme visitors see first — they can switch it.
           </p>
 
-          <section className="mt-10">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Social Links
-            </h2>
-            <SocialLinksForm user={user} />
-          </section>
+          <div className="mt-10 grid gap-8">
+            <section className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold tracking-tight">Social Profiles</h2>
+                <p className="text-sm text-muted-foreground">Add links to your social media accounts to display them on your public page.</p>
+              </div>
+              <SocialLinksForm user={user} />
+            </section>
 
-          <section className="mt-10">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Default theme
-            </h2>
-            <div className="mt-4">
+            <section className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold tracking-tight">Default Theme</h2>
+                <p className="text-sm text-muted-foreground">Choose the default theme visitors will see when they first arrive.</p>
+              </div>
               <SiteThemePicker siteTheme={user?.siteTheme ?? "paper"} />
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
       </main>
 
