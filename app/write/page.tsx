@@ -10,13 +10,13 @@ import { getSessionUser } from "@/lib/auth";
 import { relativeTime } from "@/lib/format";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { DeletePostButton } from "@/components/delete-post-button";
 
 type Tab = "all" | PostStatus;
 const TABS: { id: Tab; label: string }[] = [
   { id: "all", label: "All" },
   { id: "draft", label: "Drafts" },
   { id: "published", label: "Published" },
-  { id: "template", label: "Templates" },
 ];
 
 export const dynamic = "force-dynamic";
@@ -48,7 +48,7 @@ export default async function WritePage({ searchParams }: PageProps<"/write">) {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">The desk</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Drafts, pages and templates. Saved in markdown, served at their path.
+              Drafts and pages. Saved in markdown, served at their path.
             </p>
           </div>
           <form action={createPost}>
@@ -106,13 +106,16 @@ export default async function WritePage({ searchParams }: PageProps<"/write">) {
                 <span className="hidden shrink-0 text-xs text-muted-foreground sm:block">
                   {relativeTime(post.updatedAt)}
                 </span>
-                <Link
-                  href={`/${session.username}/${post.slug}?preview=1`}
-                  target="_blank"
-                  className="shrink-0 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-background"
-                >
-                  View
-                </Link>
+                <div className="flex shrink-0 items-center gap-2">
+                  <Link
+                    href={`/${session.username}/${post.slug}?preview=1`}
+                    target="_blank"
+                    className="rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-background"
+                  >
+                    View
+                  </Link>
+                  <DeletePostButton postId={post.id} />
+                </div>
               </li>
             ))}
           </ul>
@@ -123,7 +126,7 @@ export default async function WritePage({ searchParams }: PageProps<"/write">) {
 }
 
 function StatusPill({ status }: { status: PostStatus }) {
-  const label = status === "published" ? "dot.pub" : status === "template" ? "tpl" : "draft";
+  const label = status === "published" ? "dot.pub" : "draft";
   return (
     <span
       className={cn(

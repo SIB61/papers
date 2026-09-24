@@ -265,7 +265,7 @@ export async function updateSiteTheme(theme: string) {
   return { theme };
 }
 
-export async function deletePost(id: number) {
+export async function deletePost(id: number, shouldRedirect: boolean = true) {
   const session = await getSessionUser();
   if (!session) redirect("/login");
 
@@ -278,27 +278,9 @@ export async function deletePost(id: number) {
   revalidatePath("/");
   revalidatePath("/write");
   revalidatePath(`/${session.username}/${existing[0].slug}`);
-  redirect("/write");
-}
-
-export async function duplicateFromTemplate(id: number) {
-  const session = await getSessionUser();
-  if (!session) redirect("/login");
-
-  const template = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
-  if (!template[0] || !canEdit(session.id, template[0].userId)) return;
-
-  const slug = `${template[0].slug}-copy-${Date.now().toString(36)}`;
-  const [created] = await db
-    .insert(posts)
-    .values({
-      title: template[0].title,
-      slug,
-      content: template[0].content,
-      status: "draft",
-      userId: session.id,
-    })
-    .returning();
-  revalidatePath("/write");
-  redirect(`/write/${created.id}`);
+  revalidatePath(`/${session.username}`);
+  
+  if (shouldRedirect) {
+    redirect("/write");
+  }
 }

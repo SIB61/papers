@@ -1,6 +1,6 @@
 import { boolean, index, integer, pgTable, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
-export const postStatus = ["draft", "published", "template"] as const;
+export const postStatus = ["draft", "published"] as const;
 export type PostStatus = (typeof postStatus)[number];
 
 export const users = pgTable(

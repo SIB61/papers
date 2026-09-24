@@ -78,7 +78,6 @@ const TOOL_TRANSFORMS: Record<
 const STATUS_LABELS: Record<PostStatus, string> = {
   draft: "Draft",
   published: "Published",
-  template: "Template",
 };
 
 export function Editor({ post, username }: { post: Post; username: string }) {
@@ -111,6 +110,10 @@ export function Editor({ post, username }: { post: Post; username: string }) {
   }, [dirty]);
 
   const insertMarkdown = useCallback((key: string) => {
+    if (key === "image") {
+      fileInputRef.current?.click();
+      return;
+    }
     const ta = textareaRef.current;
     if (!ta) return;
     const t = TOOL_TRANSFORMS[key];
@@ -254,7 +257,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     [uploadFile],
   );
 
-  const statusSegments: PostStatus[] = ["draft", "published", "template"];
+  const statusSegments: PostStatus[] = ["draft", "published"];
   const postPath = `/${username}/${normalizeSlug(slug)}`;
   const deferredContent = useDeferredValue(content);
 
@@ -397,6 +400,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
                 key={tool.key}
                 tool={tool}
                 onClick={() => insertMarkdown(tool.key)}
+                loading={tool.key === "image" ? uploading : false}
               />
             ))}
             <span className="mx-1 h-5 w-px bg-border" />
@@ -411,34 +415,20 @@ export function Editor({ post, username }: { post: Post; username: string }) {
                 e.target.value = "";
               }}
             />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              title="Upload image to R2"
-              className="flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium transition-colors hover:bg-muted disabled:opacity-50"
-            >
-              {uploading ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                <Upload className="size-3.5" />
-              )}
-              <span className="hidden sm:inline">Image</span>
-            </button>
+
 
             <button
               type="button"
               onClick={() => void beautify()}
               disabled={beautifying || !content.trim()}
               title="Beautify with Gemini — restyles the presentation without changing the content"
-              className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-2.5 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40"
+              className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 text-white transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40"
             >
               {beautifying ? (
-                <Loader2 className="size-3.5 animate-spin" />
+                <Loader2 className="size-4 animate-spin" />
               ) : (
-                <Sparkles className="size-3.5" />
+                <Sparkles className="size-4" />
               )}
-              <span className="hidden sm:inline">Beautify</span>
             </button>
           </div>
         </div>
@@ -498,19 +488,22 @@ export function Editor({ post, username }: { post: Post; username: string }) {
 function ToolButton({
   tool,
   onClick,
+  loading,
 }: {
   tool: (typeof TOOLS)[number];
   onClick: () => void;
+  loading?: boolean;
 }) {
   const Icon = tool.icon;
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={loading}
       title={tool.label}
-      className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
     >
-      <Icon className="size-4" />
+      {loading ? <Loader2 className="size-4 animate-spin" /> : <Icon className="size-4" />}
     </button>
   );
 }

@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   Feather,
-  LayoutTemplate,
   Palette,
   PenLine,
   ShieldCheck,
@@ -32,12 +31,7 @@ const FEATURES = [
   {
     icon: PenLine,
     title: "Everything is typed",
-    body: "Drafts, notes and templates all live in one desk. Publish a page and it lands at a clean, shareable URL.",
-  },
-  {
-    icon: LayoutTemplate,
-    title: "Templates that copy",
-    body: "Keep a template page and duplicate it into new posts — a skeleton for starters, essays and case studies.",
+    body: "Drafts and notes live in one desk. Publish a page and it lands at a clean, shareable URL.",
   },
   {
     icon: ShieldCheck,

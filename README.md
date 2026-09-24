@@ -6,8 +6,7 @@ PV, portfolio, project notes — all in `papers`.
 - **Write** at `/write` — full markdown editor with a live preview, WYSIWYG toolbar,
   drag & paste image upload (to Cloudflare R2), and `⌘S` to save.
 - **Path** = URL. Set a post's path to `portfolio/cv` and it renders at `/portfolio/cv`.
-- **Types**: `draft`, `published`, and `template` — templates are
-  reusable skeletons you start new posts from.
+- **Types**: `draft` and `published` — drafts are only visible to you.
 - **Themes**: six flat black-and-white themes (Paper, Contrast, Graphite, Ivory, Noir,
   Ink). Switch them live from the header; the theme is stored per-browser and
   applies to the whole site.
@@ -58,7 +57,7 @@ them straight from the clipboard.
 
 The `slug` column holds the path (`portfolio/cv`). The root catch-all route
 (`app/[...slug]`) serves anything that isn't a reserved route. Only `published`
-posts are public; drafts and templates return 404 unless you open them with
+posts are public; drafts return 404 unless you open them with
 `?preview=1` (the editor does this for you).
 
 ## Structure

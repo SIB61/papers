@@ -12,7 +12,7 @@ export class GeminiError extends Error {
 
 export async function beautifyMarkdown(content: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
-  const model = process.env.GEMINI_MODEL ?? "gemini-2.5-flash-lite";
+  const model = process.env.GEMINI_MODEL ?? "gemini-3.6-flash";
 
   if (!apiKey) throw new GeminiError("GEMINI_API_KEY is not configured", 500);
   if (!content.trim()) throw new GeminiError("Nothing to beautify", 400);

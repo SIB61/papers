@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { posts, users } from "@/lib/db/schema";
 import { relativeTime } from "@/lib/format";
 import { getSessionUser } from "@/lib/auth";
-
+import { DeletePostButton } from "@/components/delete-post-button";
 export const dynamic = "force-dynamic";
 
 export default async function UserHomePage({ params }: PageProps<"/[username]">) {
@@ -68,25 +68,23 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
             {published
               .filter((p) => p.status === "published")
               .map((post) => (
-                <li key={post.id}>
+                <li key={post.id} className="group flex items-center justify-between gap-4 py-4 transition-colors">
                   <Link
                     href={`/${user.username}/${post.slug}`}
-                    className="group flex items-baseline justify-between gap-4 py-4 transition-colors"
+                    className="flex flex-1 items-center gap-4 min-w-0"
                   >
-                    <span className="font-mono text-sm text-muted-foreground">
-                      /{user.username}/{post.slug}
-                    </span>
-                    <span className="flex flex-1 items-center gap-2">
-                      <span className="h-px flex-1 border-b border-dotted border-border transition-colors group-hover:border-muted-foreground/40" />
-                      <span className="font-medium group-hover:underline underline-offset-4">
+                    <span className="flex flex-1 items-center gap-2 min-w-0">
+                      <span className="font-medium group-hover:underline underline-offset-4 truncate">
                         {post.title}
                       </span>
-                      <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      <span className="h-px flex-1 shrink border-b border-dotted border-border transition-colors group-hover:border-muted-foreground/40 hidden sm:block" />
                     </span>
                     <span className="hidden shrink-0 text-xs text-muted-foreground sm:block">
                       {relativeTime(post.updatedAt)}
                     </span>
                   </Link>
+                  {isOwner && <DeletePostButton postId={post.id} />}
                 </li>
               ))}
           </ul>

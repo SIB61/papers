@@ -26,7 +26,7 @@ npm run dev
     {
       slug: "portfolio",
       title: "Portfolio",
-      status: "template" as const,
+      status: "draft" as const,
       content: `# Portfolio
 
 ## Selected work
