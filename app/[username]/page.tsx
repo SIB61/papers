@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, PenLine, Twitter, Github, Linkedin, Globe } from "lucide-react";
+import { ArrowUpRight, PenLine, Globe } from "lucide-react";
+import { Twitter, Github, Linkedin } from "@/components/icons";
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { posts, users } from "@/lib/db/schema";
