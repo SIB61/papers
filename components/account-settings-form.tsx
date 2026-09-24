@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Loader2, Camera, UserCircle2 } from "lucide-react";
 import { updateAccountDetails } from "@/app/actions";
 import { useRouter } from "next/navigation";
@@ -15,9 +15,33 @@ export function AccountSettingsForm({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [imagePreview, setImagePreview] = useState(user.image);
+  
+  const [formData, setFormData] = useState({
+    name: user.name || "",
+    username: user.username || "",
+  });
+  
+  const [imagePreview, setImagePreview] = useState(user.image || "");
+  
+  // When user prop changes (e.g. after refresh), update state
+  useEffect(() => {
+    setFormData({
+      name: user.name || "",
+      username: user.username || "",
+    });
+    setImagePreview(user.image || "");
+  }, [user]);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const isDirty = 
+    formData.name !== (user.name || "") ||
+    formData.username !== (user.username || "") ||
+    imagePreview !== (user.image || "");
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -48,26 +72,25 @@ export function AccountSettingsForm({
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!isDirty) return;
+    
     setSaving(true);
     setError(null);
     setSuccess(false);
 
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      name: (formData.get("name") as string) || "",
-      username: (formData.get("username") as string) || "",
-      image: imagePreview,
-    };
-
     try {
-      const res = await updateAccountDetails(data);
+      const res = await updateAccountDetails({
+        ...formData,
+        image: imagePreview,
+      });
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2000);
       
-      if (res.username !== user.username) {
-        // Force refresh to update the username in the UI/session
-        router.refresh();
-      }
+      // Always refresh to grab new data. If username changed, update UI accordingly
+      router.refresh();
+      
+      // If we changed username, we might need a full navigation if current URL has old username, 
+      // but in settings we don't have username in the URL (it's /settings). So refresh is enough!
     } catch (err: any) {
       setError(err.message || "Couldn't save — try again.");
     } finally {
@@ -119,7 +142,8 @@ export function AccountSettingsForm({
             id="name"
             name="name"
             type="text"
-            defaultValue={user.name}
+            value={formData.name}
+            onChange={handleChange}
             placeholder="John Doe"
             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
           />
@@ -132,7 +156,8 @@ export function AccountSettingsForm({
               id="username"
               name="username"
               type="text"
-              defaultValue={user.username}
+              value={formData.username}
+              onChange={handleChange}
               placeholder="username"
               className="flex h-10 w-full rounded-md border border-input bg-background pl-6 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
             />
@@ -141,15 +166,17 @@ export function AccountSettingsForm({
         </div>
       </div>
       
-      <div className="mt-6 flex flex-wrap items-center gap-4">
-        <button
-          type="submit"
-          disabled={saving || uploading}
-          className="inline-flex h-10 items-center justify-center rounded-md bg-foreground px-6 py-2 text-sm font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-        >
-          {saving && <Loader2 className="mr-2 size-4 animate-spin" />}
-          Save changes
-        </button>
+      <div className="mt-6 flex flex-wrap items-center gap-4 min-h-10">
+        {isDirty && (
+          <button
+            type="submit"
+            disabled={saving || uploading}
+            className="inline-flex h-10 items-center justify-center rounded-md bg-foreground px-6 py-2 text-sm font-medium text-background transition-colors hover:bg-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 animate-in fade-in zoom-in-95 duration-200"
+          >
+            {saving && <Loader2 className="mr-2 size-4 animate-spin" />}
+            Save changes
+          </button>
+        )}
         {success && <span className="text-sm font-medium text-green-600 dark:text-green-500 animate-in fade-in slide-in-from-left-2">Saved successfully!</span>}
         {error && <span className="text-sm font-medium text-destructive animate-in fade-in slide-in-from-left-2">{error}</span>}
       </div>
