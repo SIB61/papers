@@ -37,12 +37,12 @@ export function SocialLinksForm({
   }, [user]);
 
   const isDirty = 
-    formData.contactEmail !== (user.contactEmail || "") ||
-    formData.whatsapp !== (user.whatsapp || "") ||
-    formData.twitter !== (user.twitter || "") ||
-    formData.github !== (user.github || "") ||
-    formData.linkedin !== (user.linkedin || "") ||
-    formData.website !== (user.website || "");
+    formData.contactEmail.trim() !== (user.contactEmail || "") ||
+    formData.whatsapp.trim() !== (user.whatsapp || "") ||
+    formData.twitter.trim() !== (user.twitter || "") ||
+    formData.github.trim() !== (user.github || "") ||
+    formData.linkedin.trim() !== (user.linkedin || "") ||
+    formData.website.trim() !== (user.website || "");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));

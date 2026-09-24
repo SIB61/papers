@@ -35,8 +35,8 @@ export function AccountSettingsForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isDirty = 
-    formData.name !== (user.name || "") ||
-    formData.username !== (user.username || "") ||
+    formData.name.trim() !== (user.name || "") ||
+    formData.username.trim() !== (user.username || "") ||
     imagePreview !== (user.image || "");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
