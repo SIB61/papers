@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, PenLine } from "lucide-react";
+import { ArrowUpRight, PenLine, Twitter, Github, Linkedin, Globe } from "lucide-react";
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { posts, users } from "@/lib/db/schema";
@@ -38,25 +38,25 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
           {published.some((p) => p.status === "draft") ? " · some drafts in progress" : ""}
         </p>
         {(user.twitter || user.github || user.linkedin || user.website) && (
-          <div className="mt-4 flex flex-wrap items-center gap-4 text-sm font-medium">
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-muted-foreground">
             {user.twitter && (
-              <a href={user.twitter.startsWith("http") ? user.twitter : `https://twitter.com/${user.twitter.replace(/^@/, '')}`} target="_blank" rel="noreferrer" className="text-muted-foreground transition-colors hover:text-foreground">
-                Twitter
+              <a href={user.twitter.startsWith("http") ? user.twitter : `https://twitter.com/${user.twitter.replace(/^@/, '')}`} target="_blank" rel="noreferrer" className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-muted hover:text-foreground" aria-label="Twitter">
+                <Twitter className="size-5" />
               </a>
             )}
             {user.github && (
-              <a href={user.github.startsWith("http") ? user.github : `https://github.com/${user.github}`} target="_blank" rel="noreferrer" className="text-muted-foreground transition-colors hover:text-foreground">
-                GitHub
+              <a href={user.github.startsWith("http") ? user.github : `https://github.com/${user.github}`} target="_blank" rel="noreferrer" className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-muted hover:text-foreground" aria-label="GitHub">
+                <Github className="size-5" />
               </a>
             )}
             {user.linkedin && (
-              <a href={user.linkedin.startsWith("http") ? user.linkedin : `https://linkedin.com/in/${user.linkedin}`} target="_blank" rel="noreferrer" className="text-muted-foreground transition-colors hover:text-foreground">
-                LinkedIn
+              <a href={user.linkedin.startsWith("http") ? user.linkedin : `https://linkedin.com/in/${user.linkedin}`} target="_blank" rel="noreferrer" className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-muted hover:text-foreground" aria-label="LinkedIn">
+                <Linkedin className="size-5" />
               </a>
             )}
             {user.website && (
-              <a href={user.website.startsWith("http") ? user.website : `https://${user.website}`} target="_blank" rel="noreferrer" className="text-muted-foreground transition-colors hover:text-foreground">
-                Website
+              <a href={user.website.startsWith("http") ? user.website : `https://${user.website}`} target="_blank" rel="noreferrer" className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-muted hover:text-foreground" aria-label="Website">
+                <Globe className="size-5" />
               </a>
             )}
           </div>
