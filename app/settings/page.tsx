@@ -7,6 +7,7 @@ import { getSessionUser } from "@/lib/auth";
 import { SiteThemePicker } from "@/components/site-theme-picker";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { SocialLinksForm } from "@/components/social-links-form";
+import { AccountSettingsForm } from "@/components/account-settings-form";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +48,14 @@ export default async function SettingsPage() {
           </p>
 
           <div className="mt-10 grid gap-8">
+            <section className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold tracking-tight">Account Details</h2>
+                <p className="text-sm text-muted-foreground">Update your display name, username, and profile picture.</p>
+              </div>
+              <AccountSettingsForm user={user} />
+            </section>
+
             <section className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">
               <div className="mb-6">
                 <h2 className="text-lg font-semibold tracking-tight">Social Profiles</h2>

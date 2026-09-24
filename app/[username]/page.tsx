@@ -30,10 +30,17 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5">
       <section className="animate-page-in py-16 sm:py-24">
-        <p className="font-mono text-sm text-muted-foreground">/{user.username}</p>
-        <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
-          {user.name || user.username}
-        </h1>
+        <div className="flex items-center gap-6">
+          {user.image && (
+            <img src={user.image} alt={user.name || user.username} className="size-20 rounded-full object-cover border-2 border-border" />
+          )}
+          <div>
+            <p className="font-mono text-sm text-muted-foreground">/{user.username}</p>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
+              {user.name || user.username}
+            </h1>
+          </div>
+        </div>
         <p className="mt-4 max-w-md text-muted-foreground">
           {published.filter((p) => p.status === "published").length} published
           {published.some((p) => p.status === "draft") ? " · some drafts in progress" : ""}

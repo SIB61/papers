@@ -305,3 +305,44 @@ export async function updateSocialLinks(data: { twitter: string; github: string;
   revalidatePath(`/${session.username}`);
   return { ok: true };
 }
+
+export async function updateAccountDetails(data: { name: string; username: string; image: string }) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  const newUsername = normalizeSlug(data.username);
+  if (!newUsername) throw new Error("Username cannot be empty");
+
+  // Check if username is already taken by another user
+  const clash = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.username, newUsername))
+    .limit(1);
+
+  if (clash[0] && clash[0].id !== session.id) {
+    throw new Error(`Username /${newUsername} is already taken.`);
+  }
+
+  const oldUser = (await db.select({ username: users.username }).from(users).where(eq(users.id, session.id)).limit(1))[0];
+
+  await db
+    .update(users)
+    .set({
+      name: data.name.trim(),
+      username: newUsername,
+      image: data.image.trim(),
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, session.id));
+
+  // Revalidate the old path if the username changed
+  if (oldUser.username !== newUsername) {
+    revalidatePath(`/${oldUser.username}`);
+  }
+  
+  revalidatePath(`/${newUsername}`);
+  
+  // if username changes, we also probably want to tell the frontend to redirect
+  return { ok: true, username: newUsername };
+}
