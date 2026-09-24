@@ -6,6 +6,7 @@ import { users } from "@/lib/db/schema";
 import { getSessionUser } from "@/lib/auth";
 import { SiteThemePicker } from "@/components/site-theme-picker";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { SocialLinksForm } from "@/components/social-links-form";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -44,6 +45,13 @@ export default async function SettingsPage() {
             </a>
             . This is the theme visitors see first — they can switch it.
           </p>
+
+          <section className="mt-10">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              Social Links
+            </h2>
+            <SocialLinksForm user={user} />
+          </section>
 
           <section className="mt-10">
             <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">

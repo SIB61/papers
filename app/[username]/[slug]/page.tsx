@@ -118,17 +118,17 @@ export default async function PostPage({
               <span className="mx-2">·</span>
               {formatDate(post.updatedAt)}
             </span>
-            {isOwner && (
-              <span className="no-print flex items-center gap-2">
-                <DownloadPdfButton />
+            <span className="no-print flex items-center gap-2">
+              <DownloadPdfButton />
+              {isOwner && (
                 <Link
                   href={`/write/${post.id}`}
                   className="rounded-md border border-border px-2 py-1 transition-colors hover:bg-muted"
                 >
                   edit
                 </Link>
-              </span>
-            )}
+              )}
+            </span>
           </footer>
         </article>
 

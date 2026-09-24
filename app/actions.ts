@@ -284,3 +284,22 @@ export async function deletePost(id: number, shouldRedirect: boolean = true) {
     redirect("/write");
   }
 }
+
+export async function updateSocialLinks(data: { twitter: string; github: string; linkedin: string; website: string }) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  await db
+    .update(users)
+    .set({
+      twitter: data.twitter.trim(),
+      github: data.github.trim(),
+      linkedin: data.linkedin.trim(),
+      website: data.website.trim(),
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, session.id));
+
+  revalidatePath(`/${session.username}`);
+  return { ok: true };
+}
