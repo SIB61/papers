@@ -15,6 +15,8 @@ export const users = pgTable(
     github: text("github").notNull().default(""),
     linkedin: text("linkedin").notNull().default(""),
     website: text("website").notNull().default(""),
+    contactEmail: text("contact_email").notNull().default(""),
+    whatsapp: text("whatsapp").notNull().default(""),
     siteTheme: text("site_theme").notNull().default("paper"),
     emailVerified: boolean("email_verified").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

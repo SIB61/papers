@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, PenLine, Globe } from "lucide-react";
-import { Twitter, Github, Linkedin } from "@/components/icons";
+import { ArrowUpRight, PenLine, Globe, Mail } from "lucide-react";
+import { Twitter, Github, Linkedin, Whatsapp } from "@/components/icons";
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { posts, users } from "@/lib/db/schema";
@@ -38,8 +38,18 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
           {published.filter((p) => p.status === "published").length} published
           {published.some((p) => p.status === "draft") ? " · some drafts in progress" : ""}
         </p>
-        {(user.twitter || user.github || user.linkedin || user.website) && (
+        {(user.twitter || user.github || user.linkedin || user.website || user.contactEmail || user.whatsapp) && (
           <div className="mt-4 flex flex-wrap items-center gap-2 text-muted-foreground">
+            {user.contactEmail && (
+              <a href={`mailto:${user.contactEmail}`} className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-muted hover:text-foreground" aria-label="Email">
+                <Mail className="size-5" />
+              </a>
+            )}
+            {user.whatsapp && (
+              <a href={`https://wa.me/${user.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-muted hover:text-foreground" aria-label="WhatsApp">
+                <Whatsapp className="size-5" />
+              </a>
+            )}
             {user.twitter && (
               <a href={user.twitter.startsWith("http") ? user.twitter : `https://twitter.com/${user.twitter.replace(/^@/, '')}`} target="_blank" rel="noreferrer" className="flex items-center justify-center rounded-md p-2 transition-colors hover:bg-muted hover:text-foreground" aria-label="Twitter">
                 <Twitter className="size-5" />

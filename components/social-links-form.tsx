@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Globe } from "lucide-react";
+import { Loader2, Globe, Mail } from "lucide-react";
 import { updateSocialLinks } from "@/app/actions";
-import { Twitter, Github, Linkedin } from "@/components/icons";
+import { Twitter, Github, Linkedin, Whatsapp } from "@/components/icons";
 
 export function SocialLinksForm({
   user,
 }: {
-  user: { twitter: string; github: string; linkedin: string; website: string };
+  user: { twitter: string; github: string; linkedin: string; website: string; contactEmail: string; whatsapp: string };
 }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +26,8 @@ export function SocialLinksForm({
       github: (formData.get("github") as string) || "",
       linkedin: (formData.get("linkedin") as string) || "",
       website: (formData.get("website") as string) || "",
+      contactEmail: (formData.get("contactEmail") as string) || "",
+      whatsapp: (formData.get("whatsapp") as string) || "",
     };
 
     try {
@@ -42,6 +44,34 @@ export function SocialLinksForm({
   return (
     <form onSubmit={handleSubmit} className="mt-4 max-w-xl">
       <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <label htmlFor="contactEmail" className="text-sm font-medium">Email</label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              id="contactEmail"
+              name="contactEmail"
+              type="email"
+              defaultValue={user.contactEmail}
+              placeholder="hello@example.com"
+              className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="whatsapp" className="text-sm font-medium">WhatsApp</label>
+          <div className="relative">
+            <Whatsapp className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              id="whatsapp"
+              name="whatsapp"
+              type="text"
+              defaultValue={user.whatsapp}
+              placeholder="+1234567890"
+              className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
+            />
+          </div>
+        </div>
         <div className="space-y-2">
           <label htmlFor="twitter" className="text-sm font-medium">Twitter (X)</label>
           <div className="relative">

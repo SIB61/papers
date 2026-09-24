@@ -285,7 +285,7 @@ export async function deletePost(id: number, shouldRedirect: boolean = true) {
   }
 }
 
-export async function updateSocialLinks(data: { twitter: string; github: string; linkedin: string; website: string }) {
+export async function updateSocialLinks(data: { twitter: string; github: string; linkedin: string; website: string; contactEmail: string; whatsapp: string }) {
   const session = await getSessionUser();
   if (!session) redirect("/login");
 
@@ -296,6 +296,8 @@ export async function updateSocialLinks(data: { twitter: string; github: string;
       github: data.github.trim(),
       linkedin: data.linkedin.trim(),
       website: data.website.trim(),
+      contactEmail: data.contactEmail.trim(),
+      whatsapp: data.whatsapp.trim(),
       updatedAt: new Date(),
     })
     .where(eq(users.id, session.id));
