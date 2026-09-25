@@ -64,6 +64,13 @@
       "when": 1790361952543,
       "tag": "0008_medical_pixie",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790365188836,
+      "tag": "0009_short_deathbird",
+      "breakpoints": true
     }
   ]
 }
