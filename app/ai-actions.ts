@@ -36,67 +36,35 @@ export async function generatePortfolio() {
   ${articles.map(p => `- Title: ${p.title}\n  Slug: ${p.slug.replace("blogs/", "")}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
   `;
 
-      const prompt = `
-  You are an expert web designer, developer, and personal branding specialist. 
-  Your task is to design a stunning, modern personal portfolio page using raw HTML and Tailwind CSS classes.
-  
+          const prompt = `
+  You are an elite, world-class UI/UX Designer and Personal Branding Specialist (think Apple, Vercel, or Stripe design aesthetics).
+  Your task is to design an ultra-modern, incredibly elegant, and highly polished personal portfolio page.
+  The output MUST be raw HTML heavily stylized with Tailwind CSS.
+
   User Data:
   ${context}
 
-  CRITICAL INSTRUCTIONS:
-  1. DEDUCE THE ROLE: Analyze the user's projects and writings to determine their precise profession.
-  2. TONE & THEME: Professional, confident, and highly engaging. Write in first-person ("I am..."). The user's current site theme is "${user.siteTheme}".
-  3. COLOR SYSTEM (CRITICAL FOR DARK MODE): NEVER hardcode specific colors like 'bg-white', 'text-black', 'bg-gray-100', 'text-slate-800', etc. You MUST EXCLUSIVELY use the following semantic Tailwind classes so the page automatically adapts to dark mode and the user's selected theme:
-     - Backgrounds: 'bg-background', 'bg-card', 'bg-muted', 'bg-secondary', 'bg-primary/10'
-     - Text: 'text-foreground', 'text-muted-foreground', 'text-primary'
-     - Borders: 'border-border', 'border-muted'
-  4. LAYOUT TEMPLATE: You MUST structure your output heavily around this raw HTML/Tailwind template. Do not just write markdown text. Use 'class' instead of 'className'.
+  DESIGN CONSTRAINTS & AESTHETICS (STRICT):
+  1. THEME AWARENESS: The user's current site theme is "${user.siteTheme}". You MUST EXCLUSIVELY use semantic Tailwind classes (e.g., bg-background, bg-card, bg-muted, text-foreground, text-muted-foreground, border-border, bg-primary/5, text-primary). NEVER hardcode specific hex colors, 'white', 'black', 'gray', or 'slate'.
+  2. TYPOGRAPHY: Use elegant, highly legible typography. 
+     - Hero text should be striking (e.g., text-4xl md:text-6xl font-extrabold tracking-tighter).
+     - Paragraphs should have high readability (e.g., text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl).
+  3. WHITESPACE & SPACING: Embrace negative space. Use generous padding and margins (e.g., py-20, gap-12, space-y-8) to create a premium feel.
+  4. MODERN UI ELEMENTS:
+     - Use soft rounded corners (rounded-2xl or rounded-3xl for cards, rounded-full for badges).
+     - Use subtle, elegant borders (border border-border/60).
+     - Add sophisticated hover effects to all clickable elements (hover:bg-muted/40 hover:border-border transition-all duration-300).
+     - Group skills into elegant pills/badges with soft backgrounds (bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium).
+  5. LAYOUT STRUCTURE:
+     - HERO: A stunning intro section that captures their deduced professional role perfectly. (DO NOT use an H1, start with H2 or div).
+     - SKILLS: A clean, wrapped flex layout of their tech stack/expertise.
+     - PROJECTS & WRITINGS: Beautiful, responsive CSS Grids (grid grid-cols-1 md:grid-cols-2 gap-6).
+     - CARDS: Make project/article cards look like premium components (p-8 rounded-3xl border border-border/50 bg-card hover:shadow-sm transition-all). Include actual href links using the provided slugs (e.g., href="/${session.username}/projects/my-slug").
 
-  <div class="flex flex-col gap-16 py-8">
-    <!-- Hero Section -->
-    <section class="flex flex-col items-start space-y-4">
-      <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">[Deduced Role / Catchy Tagline]</h2>
-      <p class="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-        [2-3 sentences summarizing their experience, mission, and unique value based on their projects]
-      </p>
-    </section>
-
-    <!-- Skills Section -->
-    <section>
-      <h3 class="text-xl font-bold mb-4 text-foreground">Core Expertise</h3>
-      <div class="flex flex-wrap gap-2">
-        <!-- Generate these based on their projects -->
-        <span class="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-sm font-medium border border-primary/20">Skill 1</span>
-        <span class="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-sm font-medium border border-primary/20">Skill 2</span>
-      </div>
-    </section>
-
-    <!-- Projects Grid -->
-    <section>
-      <h3 class="text-xl font-bold mb-6 text-foreground">Featured Projects</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Iterate over their top projects -->
-        <a href="/${session.username}/projects/[slug]" class="flex flex-col p-6 rounded-2xl border border-border bg-card hover:bg-muted/50 transition-colors shadow-sm">
-          <h4 class="font-bold text-lg mb-2 text-foreground">Project Name</h4>
-          <p class="text-sm text-muted-foreground line-clamp-3">Description...</p>
-        </a>
-      </div>
-    </section>
-    
-    <!-- Writings/Articles -->
-    <section>
-      <h3 class="text-xl font-bold mb-6 text-foreground">Recent Writings</h3>
-      <div class="grid grid-cols-1 gap-4">
-        <!-- Iterate over their top articles -->
-        <a href="/${session.username}/blogs/[slug]" class="p-5 rounded-2xl border border-border hover:border-primary/50 transition-colors">
-          <h4 class="font-medium text-foreground">Article Title</h4>
-        </a>
-      </div>
-    </section>
-  </div>
-
-  4. NO TOP-LEVEL H1: The page already displays their name at the top. Start with the Hero section.
-  5. OUTPUT FORMAT: Output ONLY the raw HTML/Markdown. Do NOT wrap it in 'html' or 'markdown' codeblocks! Just the raw content so it renders immediately.
+  OUTPUT FORMAT:
+  - Output ONLY the raw HTML content. DO NOT wrap it in 'html' or 'markdown' codeblocks!
+  - Use 'class' instead of 'className'.
+  - Be extraordinarily creative and design a masterpiece layout.
   `;
 
   const ai = new GoogleGenAI({});
