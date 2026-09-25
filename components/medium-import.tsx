@@ -67,7 +67,7 @@ export function MediumImportButton() {
 
   return (
     <>
-      <Button variant="outline" className="gap-2" onClick={handleOpen}>
+      <Button variant="outline" className="gap-2 h-9" size="sm" onClick={handleOpen}>
         <BookOpen className="size-4" />
         Import from Medium
       </Button>

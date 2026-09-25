@@ -68,7 +68,7 @@ export function GithubImportButton() {
 
   return (
     <>
-      <Button variant="outline" className="gap-2" onClick={handleOpen}>
+      <Button variant="outline" className="gap-2 h-9" size="sm" onClick={handleOpen}>
         <Github className="size-4" />
         Import from GitHub
       </Button>

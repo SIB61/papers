@@ -11,6 +11,9 @@ import { relativeTime } from "@/lib/format";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { DeletePostButton } from "@/components/delete-post-button";
+import { GithubImportButton } from "@/components/github-import";
+import { MediumImportButton } from "@/components/medium-import";
+import { users } from "@/lib/db/schema";
 
 type Tab = "all" | PostStatus;
 const TABS: { id: Tab; label: string }[] = [
@@ -24,6 +27,7 @@ export const dynamic = "force-dynamic";
 export default async function WritePage({ searchParams }: PageProps<"/write">) {
   const session = await getSessionUser();
   if (!session) redirect("/login");
+  const [user] = await db.select({ github: users.github, medium: users.medium }).from(users).where(eq(users.id, session.id)).limit(1);
 
   const query = await searchParams;
   const requested = query.tab;
@@ -51,15 +55,19 @@ export default async function WritePage({ searchParams }: PageProps<"/write">) {
               Drafts and pages. Saved in markdown, served at their path.
             </p>
           </div>
-          <form action={createPost}>
-            <button
-              type="submit"
-              className={cn(buttonVariants({ size: "lg" }), "gap-2")}
-            >
-              <Plus className="size-4" />
-              New post
-            </button>
-          </form>
+          <div className="flex items-center gap-2">
+            {user?.github && <GithubImportButton />}
+            {user?.medium && <MediumImportButton />}
+            <form action={createPost}>
+              <button
+                type="submit"
+                className={cn(buttonVariants({ size: "sm" }), "gap-2 h-9")}
+              >
+                <Plus className="size-4" />
+                New post
+              </button>
+            </form>
+          </div>
         </div>
 
         <div className="mb-6 flex flex-wrap gap-1">
