@@ -107,3 +107,56 @@ export async function importGithubRepo(repoFullName: string, repoName: string) {
   revalidatePath(`/${session.username}`);
   return { slug, username: session.username };
 }
+
+export async function importGithubReposBatch(repos: { fullName: string; name: string }[]) {
+  const session = await getSessionUser();
+  if (!session) throw new Error("Unauthorized");
+
+  await Promise.allSettled(
+    repos.map(async (repo) => {
+      const res = await fetch(`https://api.github.com/repos/${repo.fullName}/readme`, {
+        headers: {
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "Antigravity-Agent",
+        },
+      });
+
+      let content = "No README found for this repository.";
+      if (res.ok) {
+        const data = await res.json();
+        if (data.content && data.encoding === "base64") {
+          content = Buffer.from(data.content, "base64").toString("utf-8");
+        }
+      }
+
+      const slug = normalizeSlug(`projects/${repo.name}`);
+
+      const existing = await db
+        .select({ id: posts.id })
+        .from(posts)
+        .where(and(eq(posts.userId, session.id), eq(posts.slug, slug)))
+        .limit(1);
+
+      if (existing[0]) {
+        await db.update(posts)
+          .set({
+            title: repo.name,
+            content: content,
+            updatedAt: new Date(),
+          })
+          .where(eq(posts.id, existing[0].id));
+      } else {
+        await db.insert(posts).values({
+          userId: session.id,
+          title: repo.name,
+          slug: slug,
+          content: content,
+          status: "published",
+        });
+      }
+    })
+  );
+
+  revalidatePath(`/${session.username}`);
+  return { username: session.username, count: repos.length };
+}
