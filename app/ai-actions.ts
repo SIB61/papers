@@ -15,7 +15,7 @@ export async function generatePortfolio() {
   if (!user) throw new Error("User not found");
 
   const userPosts = await db.select().from(posts).where(
-    and(eq(posts.userId, session.id), eq(posts.status, "published"))
+    eq(posts.userId, session.id)
   );
 
   const filteredPosts = userPosts.filter(p => p.slug !== "portfolio");
@@ -28,8 +28,8 @@ export async function generatePortfolio() {
   Twitter: ${user.twitter}
   Website: ${user.website}\n  Current Site Theme: ${user.siteTheme}
 
-  User's Published Content:
-  ${filteredPosts.map(p => `- Title: ${p.title}\n  URL Slug: ${p.slug}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
+  User's Content:
+  ${filteredPosts.map(p => `- Title: ${p.title}\n  URL Slug: ${p.slug}${p.status === "draft" ? "?preview=1" : ""}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
   `;
 
             const prompt = `
