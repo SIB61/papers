@@ -14,8 +14,9 @@ export const dynamic = "force-dynamic";
 export default async function PostPage({
   params,
   searchParams,
-}: PageProps<"/[username]/[slug]">) {
+}: PageProps<"/[username]/[...slug]">) {
   const { username, slug } = await params;
+  const slugString = Array.isArray(slug) ? slug.join("/") : slug;
   const query = await searchParams;
 
   const post = (
@@ -23,7 +24,7 @@ export default async function PostPage({
       .select({ post: posts })
       .from(posts)
       .innerJoin(users, eq(posts.userId, users.id))
-      .where(and(eq(users.username, username), eq(posts.slug, slug)))
+      .where(and(eq(users.username, username), eq(posts.slug, slugString)))
       .limit(1)
   )[0]?.post;
 
@@ -100,7 +101,7 @@ export default async function PostPage({
             </Link>
             <span className="flex items-center gap-1">
               <span className="text-border">/</span>
-              <span>{slug}</span>
+              <span>{slugString}</span>
             </span>
           </nav>
 
@@ -164,19 +165,20 @@ function formatDate(date: Date): string {
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[username]/[slug]">): Promise<Metadata> {
+}: PageProps<"/[username]/[...slug]">): Promise<Metadata> {
   const { username, slug } = await params;
+  const slugString = Array.isArray(slug) ? slug.join("/") : slug;
   const post = (
     await db
       .select({ title: posts.title })
       .from(posts)
       .innerJoin(users, eq(posts.userId, users.id))
-      .where(and(eq(users.username, username), eq(posts.slug, slug)))
+      .where(and(eq(users.username, username), eq(posts.slug, slugString)))
       .limit(1)
   )[0];
   if (!post) return {};
   return {
     title: post.title,
-    alternates: { canonical: `/${username}/${slug}` },
+    alternates: { canonical: `/${username}/${slugString}` },
   };
 }

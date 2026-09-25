@@ -495,33 +495,37 @@ a {
   font-weight: 600;
 }
 
-/* Minimal monochrome syntax highlighting */
+/* Colorful syntax highlighting */
 .blog-body .hljs-comment,
 .blog-body .hljs-quote {
-  color: color-mix(in oklab, var(--muted-foreground) 85%, transparent);
+  color: var(--muted-foreground);
   font-style: italic;
 }
 .blog-body .hljs-keyword,
 .blog-body .hljs-selector-tag,
 .blog-body .hljs-built_in,
-.blog-body .hljs-attribute {
-  font-weight: 600;
+.blog-body .hljs-type {
+  color: #c678dd;
 }
 .blog-body .hljs-string,
 .blog-body .hljs-regexp,
 .blog-body .hljs-addition {
-  color: color-mix(in oklab, var(--foreground) 92%, transparent);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in oklab, var(--muted-foreground) 45%, transparent);
-  text-underline-offset: 3px;
+  color: #98c379;
 }
 .blog-body .hljs-number,
 .blog-body .hljs-literal,
-.blog-body .hljs-title {
-  font-weight: 600;
+.blog-body .hljs-symbol {
+  color: #d19a66;
 }
-.blog-body .hljs-title {
-  color: var(--foreground);
+.blog-body .hljs-title,
+.blog-body .hljs-section,
+.blog-body .hljs-name,
+.blog-body .hljs-attribute {
+  color: #61afef;
+}
+.blog-body .hljs-variable,
+.blog-body .hljs-template-variable {
+  color: #e06c75;
 }
 
 /* ============================================================

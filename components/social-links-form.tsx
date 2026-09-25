@@ -5,6 +5,7 @@ import { Loader2, Globe, Mail } from "lucide-react";
 import { updateSocialLinks } from "@/app/actions";
 import { Twitter, Github, Linkedin, Whatsapp } from "@/components/icons";
 import { useRouter } from "next/navigation";
+import { GithubImportButton } from "@/components/github-import";
 
 export function SocialLinksForm({
   user,
@@ -117,7 +118,10 @@ export function SocialLinksForm({
           </div>
         </div>
         <div className="space-y-2">
-          <label htmlFor="github" className="text-sm font-medium">GitHub</label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="github" className="text-sm font-medium">GitHub</label>
+            {user.github && <GithubImportButton />}
+          </div>
           <div className="relative">
             <Github className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <input
