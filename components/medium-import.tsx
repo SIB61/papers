@@ -52,7 +52,7 @@ export function MediumImportButton() {
       const result = await importMediumBlogsBatch(selectedBlogs);
       setOpen(false);
       setSelectedIds(new Set());
-      router.push(`/${result.username}`);
+      router.refresh();
     } catch (err: any) {
       setError(err.message || "Failed to import");
     } finally {

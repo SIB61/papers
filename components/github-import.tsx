@@ -53,7 +53,7 @@ export function GithubImportButton() {
       const result = await importGithubReposBatch(selectedRepos);
       setOpen(false);
       setSelectedIds(new Set());
-      router.push(`/${result.username}`);
+      router.refresh();
     } catch (err: any) {
       setError(err.message || "Failed to import");
     } finally {

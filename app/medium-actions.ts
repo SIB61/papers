@@ -106,5 +106,6 @@ export async function importMediumBlogsBatch(blogs: { title: string; htmlContent
   );
 
   revalidatePath(`/${session.username}`);
+  revalidatePath("/write");
   return { username: session.username, count: blogs.length };
 }

@@ -114,6 +114,7 @@ export async function importGithubRepo(repoFullName: string, repoName: string) {
   }
 
   revalidatePath(`/${session.username}`);
+  revalidatePath("/write");
   return { slug, username: session.username };
 }
 
@@ -167,5 +168,6 @@ export async function importGithubReposBatch(repos: { fullName: string; name: st
   );
 
   revalidatePath(`/${session.username}`);
+  revalidatePath("/write");
   return { username: session.username, count: repos.length };
 }
