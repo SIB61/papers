@@ -27,7 +27,7 @@ export async function generatePortfolio() {
   GitHub: ${user.github}
   LinkedIn: ${user.linkedin}
   Twitter: ${user.twitter}
-  Website: ${user.website}
+  Website: ${user.website}\n  Current Site Theme: ${user.siteTheme}
 
   Projects:
   ${projects.map(p => `- Title: ${p.title}\n  Slug: ${p.slug.replace("projects/", "")}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
@@ -45,8 +45,12 @@ export async function generatePortfolio() {
 
   CRITICAL INSTRUCTIONS:
   1. DEDUCE THE ROLE: Analyze the user's projects and writings to determine their precise profession.
-  2. TONE: Professional, confident, and highly engaging. Write in first-person ("I am...").
-  3. LAYOUT TEMPLATE: You MUST structure your output heavily around this raw HTML/Tailwind template. Do not just write markdown text. Use 'class' instead of 'className'.
+  2. TONE & THEME: Professional, confident, and highly engaging. Write in first-person ("I am..."). The user's current site theme is "${user.siteTheme}".
+  3. COLOR SYSTEM (CRITICAL FOR DARK MODE): NEVER hardcode specific colors like 'bg-white', 'text-black', 'bg-gray-100', 'text-slate-800', etc. You MUST EXCLUSIVELY use the following semantic Tailwind classes so the page automatically adapts to dark mode and the user's selected theme:
+     - Backgrounds: 'bg-background', 'bg-card', 'bg-muted', 'bg-secondary', 'bg-primary/10'
+     - Text: 'text-foreground', 'text-muted-foreground', 'text-primary'
+     - Borders: 'border-border', 'border-muted'
+  4. LAYOUT TEMPLATE: You MUST structure your output heavily around this raw HTML/Tailwind template. Do not just write markdown text. Use 'class' instead of 'className'.
 
   <div class="flex flex-col gap-16 py-8">
     <!-- Hero Section -->
