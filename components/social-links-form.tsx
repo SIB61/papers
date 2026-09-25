@@ -4,13 +4,15 @@ import { useState, useEffect } from "react";
 import { Loader2, Globe, Mail } from "lucide-react";
 import { updateSocialLinks } from "@/app/actions";
 import { Twitter, Github, Linkedin, Whatsapp } from "@/components/icons";
+import { BookOpen } from "lucide-react";
+import { MediumImportButton } from "@/components/medium-import";
 import { useRouter } from "next/navigation";
 import { GithubImportButton } from "@/components/github-import";
 
 export function SocialLinksForm({
   user,
 }: {
-  user: { twitter: string; github: string; linkedin: string; website: string; contactEmail: string; whatsapp: string };
+  user: { twitter: string; github: string; linkedin: string; medium: string; website: string; contactEmail: string; whatsapp: string };
 }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
@@ -23,6 +25,7 @@ export function SocialLinksForm({
     twitter: user.twitter || "",
     github: user.github || "",
     linkedin: user.linkedin || "",
+    medium: user.medium || "",
     website: user.website || "",
   });
 
@@ -33,6 +36,7 @@ export function SocialLinksForm({
       twitter: user.twitter || "",
       github: user.github || "",
       linkedin: user.linkedin || "",
+      medium: user.medium || "",
       website: user.website || "",
     });
   }, [user]);
@@ -43,6 +47,7 @@ export function SocialLinksForm({
     formData.twitter.trim() !== (user.twitter || "") ||
     formData.github.trim() !== (user.github || "") ||
     formData.linkedin.trim() !== (user.linkedin || "") ||
+    formData.medium.trim() !== (user.medium || "") ||
     formData.website.trim() !== (user.website || "");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -129,6 +134,24 @@ export function SocialLinksForm({
               name="github"
               type="text"
               value={formData.github}
+              onChange={handleChange}
+              placeholder="username"
+              className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label htmlFor="medium" className="text-sm font-medium">Medium</label>
+            {user.medium && <MediumImportButton />}
+          </div>
+          <div className="relative">
+            <BookOpen className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              id="medium"
+              name="medium"
+              type="text"
+              value={formData.medium}
               onChange={handleChange}
               placeholder="username"
               className="flex h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all"

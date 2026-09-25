@@ -14,6 +14,7 @@ export const users = pgTable(
     twitter: text("twitter").notNull().default(""),
     github: text("github").notNull().default(""),
     linkedin: text("linkedin").notNull().default(""),
+    medium: text("medium").notNull().default(""),
     website: text("website").notNull().default(""),
     contactEmail: text("contact_email").notNull().default(""),
     whatsapp: text("whatsapp").notNull().default(""),
