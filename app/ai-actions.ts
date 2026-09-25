@@ -41,8 +41,10 @@ export async function generatePortfolio() {
   ${context}
 
   DESIGN CONSTRAINTS & AESTHETICS (STRICT):
-  1. NO JSX OR JAVASCRIPT: You MUST write 100% static, hardcoded HTML. NEVER use React syntax like \`{[...].map()}\` or \`{skill}\`. Write out every single HTML tag explicitly.
-  2. FULLY POPULATE CONTENT: NEVER leave empty blocks, placeholders, or comments like "<!-- Writings Section -->". You must iterate through the provided User Data yourself and generate the HTML for EVERY project, writing, and skill. 
+  1. STRICT HTML ONLY: You are generating a static HTML document, NOT a React component. Do NOT use JSX, mapping functions, or JavaScript interpolations.
+     - BAD: <div class="skills">{['React'].map(s => <span>{s}</span>)}</div>
+     - GOOD: <div class="skills"><span>React</span></div>
+  2. COMPLETE THE DESIGN: You MUST fully populate all data. Do NOT leave HTML comments like "<!-- Projects Section -->" or placeholders. Write out the actual HTML elements for every single item provided in the User Data.
   3. THEME AWARENESS & COLOR CONTRAST: The user's current site theme is "${user.siteTheme}". You MUST EXCLUSIVELY use semantic Tailwind classes (bg-background, bg-card, bg-muted, text-foreground, text-muted-foreground, border-border, text-primary). 
      - CRITICAL CONTRAST RULE: If a button or badge uses \`bg-primary\`, its text MUST be \`text-primary-foreground\`. If it uses \`bg-primary/10\`, use \`text-primary\`. NEVER make the background and text the same color.
      - NEVER hardcode specific hex colors, 'white', 'black', 'gray', or 'slate'.
