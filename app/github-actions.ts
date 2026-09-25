@@ -48,13 +48,22 @@ export async function fetchGithubRepos() {
   }
 
   const data = await res.json();
-  return data.map((repo: any) => ({
-    id: repo.id,
-    name: repo.name,
-    description: repo.description,
-    fullName: repo.full_name,
-  }));
+  
+  const userPosts = await db.select({ slug: posts.slug }).from(posts).where(eq(posts.userId, session.id));
+  const existingSlugs = new Set(userPosts.map(p => p.slug));
+
+  return data.map((repo: any) => {
+    const slug = normalizeSlug(`projects/${repo.name}`);
+    return {
+      id: repo.id,
+      name: repo.name,
+      description: repo.description,
+      fullName: repo.full_name,
+      isImported: existingSlugs.has(slug),
+    };
+  });
 }
+
 
 export async function importGithubRepo(repoFullName: string, repoName: string) {
   const session = await getSessionUser();

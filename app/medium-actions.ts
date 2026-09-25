@@ -36,6 +36,9 @@ export async function fetchMediumBlogs() {
   
   const xml = await res.text();
   
+  const userPosts = await db.select({ slug: posts.slug }).from(posts).where(eq(posts.userId, session.id));
+  const existingSlugs = new Set(userPosts.map(p => p.slug));
+  
   const items = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
   let match;
@@ -47,11 +50,14 @@ export async function fetchMediumBlogs() {
     const encodedMatch = /<content:encoded><!\[CDATA\[([\s\S]*?)\]\]><\/content:encoded>/.exec(itemXml);
     
     if (titleMatch) {
+      const title = titleMatch[1];
+      const slug = normalizeSlug(title);
       items.push({
         id,
-        title: titleMatch[1],
+        title,
         link: linkMatch ? linkMatch[1] : "",
         htmlContent: encodedMatch ? encodedMatch[1] : "",
+        isImported: existingSlugs.has(slug),
       });
     }
   }

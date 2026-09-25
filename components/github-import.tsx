@@ -32,11 +32,12 @@ export function GithubImportButton() {
     }
   };
 
-  const toggleSelection = (id: number) => {
+  const toggleSelection = (repo: any) => {
+    if (repo.isImported) return;
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(repo.id)) next.delete(repo.id);
+      else next.add(repo.id);
       return next;
     });
   };
@@ -100,14 +101,14 @@ export function GithubImportButton() {
                 <>
                   <div className="flex justify-end pb-2">
                     <Button variant="ghost" size="sm" onClick={selectAll} className="text-xs h-8">
-                      {selectedIds.size === repos.length ? "Deselect All" : "Select All"}
+                      {repos.filter(r => !r.isImported).length > 0 && selectedIds.size === repos.filter(r => !r.isImported).length ? "Deselect All" : "Select All"}
                     </Button>
                   </div>
                   {repos.map((repo) => (
                     <div
                       key={repo.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-                      onClick={() => toggleSelection(repo.id)}
+                      className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${repo.isImported ? "bg-muted/30 opacity-70" : "hover:bg-muted/50 cursor-pointer"}`}
+                      onClick={() => toggleSelection(repo)}
                     >
                       <div className="overflow-hidden mr-4">
                         <div className="font-medium truncate text-sm" title={repo.name}>{repo.name}</div>
@@ -117,8 +118,10 @@ export function GithubImportButton() {
                           </div>
                         )}
                       </div>
-                      <div className="shrink-0 text-muted-foreground">
-                        {selectedIds.has(repo.id) ? (
+                      <div className="shrink-0 text-muted-foreground flex items-center">
+                        {repo.isImported ? (
+                          <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">Imported</span>
+                        ) : selectedIds.has(repo.id) ? (
                           <CheckSquare className="size-5 text-primary" />
                         ) : (
                           <Square className="size-5" />

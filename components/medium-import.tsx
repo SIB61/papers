@@ -31,11 +31,12 @@ export function MediumImportButton() {
     }
   };
 
-  const toggleSelection = (id: string) => {
+  const toggleSelection = (blog: any) => {
+    if (blog.isImported) return;
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(blog.id)) next.delete(blog.id);
+      else next.add(blog.id);
       return next;
     });
   };
@@ -99,14 +100,14 @@ export function MediumImportButton() {
                 <>
                   <div className="flex justify-end pb-2">
                     <Button variant="ghost" size="sm" onClick={selectAll} className="text-xs h-8">
-                      {selectedIds.size === blogs.length ? "Deselect All" : "Select All"}
+                      {blogs.filter(r => !r.isImported).length > 0 && selectedIds.size === blogs.filter(r => !r.isImported).length ? "Deselect All" : "Select All"}
                     </Button>
                   </div>
                   {blogs.map((blog) => (
                     <div
                       key={blog.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-                      onClick={() => toggleSelection(blog.id)}
+                      className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${blog.isImported ? "bg-muted/30 opacity-70" : "hover:bg-muted/50 cursor-pointer"}`}
+                      onClick={() => toggleSelection(blog)}
                     >
                       <div className="overflow-hidden mr-4">
                         <div className="font-medium truncate text-sm" title={blog.title}>{blog.title}</div>
@@ -116,8 +117,10 @@ export function MediumImportButton() {
                           </div>
                         )}
                       </div>
-                      <div className="shrink-0 text-muted-foreground">
-                        {selectedIds.has(blog.id) ? (
+                      <div className="shrink-0 text-muted-foreground flex items-center">
+                        {blog.isImported ? (
+                          <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded">Imported</span>
+                        ) : selectedIds.has(blog.id) ? (
                           <CheckSquare className="size-5 text-primary" />
                         ) : (
                           <Square className="size-5" />
