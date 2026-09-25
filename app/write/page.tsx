@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { DeletePostButton } from "@/components/delete-post-button";
 import { GithubImportButton } from "@/components/github-import";
 import { MediumImportButton } from "@/components/medium-import";
-import { GeneratePortfolioButton } from "@/components/generate-portfolio-button";
 import { users } from "@/lib/db/schema";
 
 type Tab = "all" | PostStatus;
@@ -59,7 +58,6 @@ export default async function WritePage({ searchParams }: PageProps<"/write">) {
           <div className="flex items-center gap-2">
             {user?.github && <GithubImportButton />}
             {user?.medium && <MediumImportButton />}
-            <GeneratePortfolioButton username={session.username} />
             <form action={createPost}>
               <button
                 type="submit"

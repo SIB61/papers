@@ -8,7 +8,6 @@ import { posts, users } from "@/lib/db/schema";
 import { relativeTime } from "@/lib/format";
 import { getSessionUser } from "@/lib/auth";
 import { DeletePostButton } from "@/components/delete-post-button";
-import Markdown from "@/components/markdown";
 export const dynamic = "force-dynamic";
 
 export default async function UserHomePage({ params }: PageProps<"/[username]">) {
@@ -91,12 +90,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
         )}
       </section>
 
-            <section className="animate-page-in pb-24" style={{ animationDelay: "120ms" }}>
-        {user.portfolio && (
-          <div className="mb-16">
-            <Markdown>{user.portfolio}</Markdown>
-          </div>
-        )}
+      <section className="animate-page-in pb-24" style={{ animationDelay: "120ms" }}>
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Index
         </h2>

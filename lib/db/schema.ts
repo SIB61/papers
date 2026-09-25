@@ -18,7 +18,6 @@ export const users = pgTable(
     website: text("website").notNull().default(""),
     contactEmail: text("contact_email").notNull().default(""),
     whatsapp: text("whatsapp").notNull().default(""),
-    portfolio: text("portfolio"),
     siteTheme: text("site_theme").notNull().default("paper"),
     emailVerified: boolean("email_verified").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
