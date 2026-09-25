@@ -18,8 +18,7 @@ export async function generatePortfolio() {
     and(eq(posts.userId, session.id), eq(posts.status, "published"))
   );
 
-  const projects = userPosts.filter(p => p.slug.startsWith("projects/"));
-  const articles = userPosts.filter(p => p.slug.startsWith("blogs/") || (!p.slug.startsWith("projects/") && p.slug !== "portfolio"));
+  const filteredPosts = userPosts.filter(p => p.slug !== "portfolio");
 
   const context = `
   User Name: ${user.name}
@@ -29,11 +28,8 @@ export async function generatePortfolio() {
   Twitter: ${user.twitter}
   Website: ${user.website}\n  Current Site Theme: ${user.siteTheme}
 
-  Projects:
-  ${projects.map(p => `- Title: ${p.title}\n  Slug: ${p.slug.replace("projects/", "")}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
-
-  Articles / Writings:
-  ${articles.map(p => `- Title: ${p.title}\n  Slug: ${p.slug.replace("blogs/", "")}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
+  User's Published Content:
+  ${filteredPosts.map(p => `- Title: ${p.title}\n  URL Slug: ${p.slug}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
   `;
 
             const prompt = `
@@ -59,11 +55,11 @@ export async function generatePortfolio() {
      - Use subtle, elegant borders (border border-border/60).
      - Add sophisticated hover effects to all clickable elements (hover:bg-muted/40 hover:border-border transition-all duration-300).
      - Group skills into elegant pills/badges.
-  7. LAYOUT STRUCTURE:
-     - HERO: A stunning intro section that captures their deduced professional role perfectly. (DO NOT use an H1, start with H2 or div).
-     - SKILLS: A clean, wrapped flex layout of their tech stack/expertise.
-     - PROJECTS & WRITINGS: Beautiful, responsive CSS Grids (grid grid-cols-1 md:grid-cols-2 gap-6).
-     - CARDS: Make project/article cards look like premium components (p-8 rounded-3xl border border-border/50 bg-card hover:shadow-sm transition-all). Include actual href links using the provided slugs (e.g., href="/${session.username}/projects/my-slug").
+    7. DYNAMIC LAYOUT & SECTIONS: Analyze the URL Slugs of the User's Content.
+     - Slugs have prefixes denoting their category (e.g., 'projects/...', 'blogs/...', 'achievements/...').
+     - You MUST dynamically design distinct, beautiful UI sections for EACH category you find (e.g. a "Projects" grid, an "Achievements" showcase, a "Writings" list).
+     - Group skills into a clean, wrapped flex layout of tech stack/expertise.
+     - For content cards, include actual href links using the provided slugs exactly, prefixed by '/${session.username}/' (e.g., href="/${session.username}/projects/my-app"). Make them look like premium components (p-8 rounded-3xl border border-border/50 bg-card hover:shadow-sm transition-all).
 
   OUTPUT FORMAT:
   - Output ONLY the raw HTML content. DO NOT wrap it in 'html' or 'markdown' codeblocks!
