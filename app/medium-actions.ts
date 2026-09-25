@@ -51,7 +51,7 @@ export async function fetchMediumBlogs() {
     
     if (titleMatch) {
       const title = titleMatch[1];
-      const slug = normalizeSlug(title);
+      const slug = normalizeSlug("blogs/" + title);
       items.push({
         id,
         title,
@@ -77,7 +77,7 @@ export async function importMediumBlogsBatch(blogs: { title: string; htmlContent
   await Promise.allSettled(
     blogs.map(async (blog) => {
       let markdown = blog.htmlContent ? turndownService.turndown(blog.htmlContent) : "No content";
-      const slug = normalizeSlug(blog.title);
+      const slug = normalizeSlug("blogs/" + blog.title);
       
       const existing = await db
         .select({ id: posts.id })
