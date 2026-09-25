@@ -99,7 +99,7 @@ export async function importMediumBlogsBatch(blogs: { title: string; htmlContent
           title: blog.title,
           slug: slug,
           content: markdown,
-          status: "published",
+          status: "draft",
         });
       }
     })

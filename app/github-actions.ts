@@ -109,7 +109,7 @@ export async function importGithubRepo(repoFullName: string, repoName: string) {
       title: repoName,
       slug: slug,
       content: content,
-      status: "published",
+      status: "draft",
     });
   }
 
@@ -160,7 +160,7 @@ export async function importGithubReposBatch(repos: { fullName: string; name: st
           title: repo.name,
           slug: slug,
           content: content,
-          status: "published",
+          status: "draft",
         });
       }
     })
