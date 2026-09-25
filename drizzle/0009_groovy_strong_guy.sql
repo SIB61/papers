@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ADD COLUMN "show_on_profile" boolean DEFAULT false NOT NULL;

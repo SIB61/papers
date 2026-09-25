@@ -64,6 +64,13 @@
       "when": 1790361952543,
       "tag": "0008_medical_pixie",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790372995786,
+      "tag": "0009_groovy_strong_guy",
+      "breakpoints": true
     }
   ]
 }

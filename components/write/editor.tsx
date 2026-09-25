@@ -96,8 +96,20 @@ export function Editor({ post, username }: { post: Post; username: string }) {
   const [beautifying, setBeautifying] = useState(false);
 
   const titleAuto = useRef(post.slug.startsWith("draft-"));
+  const titleRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const resizeTitle = useCallback(() => {
+    if (titleRef.current) {
+      titleRef.current.style.height = "auto";
+      titleRef.current.style.height = titleRef.current.scrollHeight + "px";
+    }
+  }, []);
+
+  useEffect(() => {
+    resizeTitle();
+  }, [title, resizeTitle]);
 
   useEffect(() => {
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -294,6 +306,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
           />
 
           <div className="ml-auto flex items-center gap-2">
+
             <div className="flex items-center overflow-hidden rounded-lg border border-border">
               {statusSegments.map((s) => (
                 <button
@@ -359,12 +372,19 @@ export function Editor({ post, username }: { post: Post; username: string }) {
       </header>
 
       <div className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6">
-        <input
+        <textarea
+          ref={titleRef}
           value={title}
           onChange={(e) => handleTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+            }
+          }}
+          rows={1}
           placeholder="Untitled"
           aria-label="Title"
-          className="w-full bg-transparent text-3xl font-bold tracking-tight outline-none placeholder:text-muted-foreground/40 sm:text-4xl"
+          className="w-full resize-none overflow-hidden bg-transparent text-3xl font-bold tracking-tight outline-none placeholder:text-muted-foreground/40 sm:text-4xl"
         />
         <p className="mt-1 font-mono text-xs text-muted-foreground">{postPath}</p>
 

@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, PenLine, Globe, Mail } from "lucide-react";
+import { ArrowUpRight, Globe, Mail } from "lucide-react";
 import { Twitter, Github, Linkedin, Whatsapp } from "@/components/icons";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { posts, users } from "@/lib/db/schema";
 import { relativeTime } from "@/lib/format";
@@ -21,7 +21,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
   const published = await db
     .select()
     .from(posts)
-    .where(eq(posts.userId, user.id))
+    .where(and(eq(posts.userId, user.id), eq(posts.showOnProfile, true)))
     .orderBy(desc(posts.updatedAt));
 
   const session = await getSessionUser();
@@ -79,15 +79,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
             )}
           </div>
         )}
-        {isOwner && (
-          <Link
-            href="/write"
-            className="mt-6 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
-          >
-            <PenLine className="size-4" />
-            Write
-          </Link>
-        )}
+
       </section>
 
       <section className="animate-page-in pb-24" style={{ animationDelay: "120ms" }}>

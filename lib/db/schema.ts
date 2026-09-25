@@ -100,6 +100,7 @@ export const posts = pgTable(
     title: text("title").notNull().default(""),
     content: text("content").notNull().default(""),
     status: text("status", { enum: postStatus }).notNull().default("draft"),
+    showOnProfile: boolean("show_on_profile").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

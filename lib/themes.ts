@@ -54,3 +54,5 @@ export function isThemeId(value: string | undefined | null): value is ThemeId {
 export function getTheme(id: string): (typeof themes)[number] | undefined {
   return themes.find((t) => t.id === id);
 }
+
+export const THEME_COOKIE = "theme";

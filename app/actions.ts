@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, like, or } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   comments,
@@ -346,4 +346,70 @@ export async function updateAccountDetails(data: { name: string; username: strin
   
   // if username changes, we also probably want to tell the frontend to redirect
   return { ok: true, username: newUsername };
+}
+
+export async function renameRoute(oldSlug: string, rawNewSlug: string) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  const newSlug = normalizeSlug(rawNewSlug);
+
+  const affected = await db.select().from(posts).where(
+    and(
+      eq(posts.userId, session.id),
+      or(eq(posts.slug, oldSlug), like(posts.slug, `${oldSlug}/%`))
+    )
+  );
+
+  for (const p of affected) {
+    const newPath = p.slug === oldSlug ? newSlug : p.slug.replace(`${oldSlug}/`, `${newSlug}/`);
+    await db.update(posts).set({ slug: newPath, updatedAt: new Date() }).where(eq(posts.id, p.id));
+  }
+  revalidatePath("/");
+  revalidatePath("/write");
+  return { ok: true };
+}
+
+export async function toggleProfileVisibility(id: number, showOnProfile: boolean) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  await db
+    .update(posts)
+    .set({ showOnProfile, updatedAt: new Date() })
+    .where(and(eq(posts.id, id), eq(posts.userId, session.id)));
+
+  revalidatePath("/");
+  revalidatePath("/write");
+  return { ok: true };
+}
+
+export async function deleteRoute(slug: string) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  await db.delete(posts).where(
+    and(
+      eq(posts.userId, session.id),
+      or(eq(posts.slug, slug), like(posts.slug, `${slug}/%`))
+    )
+  );
+  revalidatePath("/");
+  revalidatePath("/write");
+  return { ok: true };
+}
+
+export async function createPostWithSlugAction(rawPath: string) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  const title = rawPath.split("/").pop() || "Untitled";
+  const slug = normalizeSlug(rawPath);
+
+  const [created] = await db
+    .insert(posts)
+    .values({ title, slug, status: "draft", userId: session.id })
+    .returning();
+  revalidatePath("/write");
+  return { id: created.id };
 }
