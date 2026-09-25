@@ -30,40 +30,76 @@ export async function generatePortfolio() {
   Website: ${user.website}
 
   Projects:
-  ${projects.map(p => `- ${p.title}:\n  ${p.content.substring(0, 500)}...`).join('\n\n')}
+  ${projects.map(p => `- Title: ${p.title}\n  Slug: ${p.slug.replace("projects/", "")}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
 
   Articles / Writings:
-  ${articles.map(p => `- ${p.title}:\n  ${p.content.substring(0, 500)}...`).join('\n\n')}
+  ${articles.map(p => `- Title: ${p.title}\n  Slug: ${p.slug.replace("blogs/", "")}\n  Description: ${p.content.substring(0, 500)}...`).join('\n\n')}
   `;
 
-    const prompt = `
-  You are an expert web designer and personal branding specialist. 
-  Your task is to design a stunning, modern personal portfolio page using raw HTML and Tailwind CSS classes inside Markdown.
+      const prompt = `
+  You are an expert web designer, developer, and personal branding specialist. 
+  Your task is to design a stunning, modern personal portfolio page using raw HTML and Tailwind CSS classes.
   
   User Data:
   ${context}
 
-  Instructions:
-  1. DEDUCE THE ROLE: Analyze the user's projects and writings to determine their precise profession (e.g., Full-Stack Engineer, Data Scientist, UI/UX Designer, etc).
-  2. TONE: Professional, confident, and highly engaging.
-  3. LAYOUT & DESIGN (CRITICAL): Do NOT just write a standard markdown text document. The renderer supports raw HTML and Tailwind CSS.
-     - Use raw HTML with Tailwind classes (e.g., <div class="grid grid-cols-1 md:grid-cols-2 gap-6">) for layouts. Note: use 'class' since this is raw HTML, not JSX.
-     - Create a beautiful Hero section introducing their deduced role and mission.
-     - Create a "Skills & Tech Stack" section using a flex wrap of stylish badges.
-     - Create a "Featured Work" section using modern card layouts (e.g. <div class="rounded-xl border bg-card p-6 shadow-sm">).
-     - Use nice Tailwind utility classes for typography, spacing, borders, and colors (e.g., text-muted-foreground, bg-muted/50).
-     - CRITICAL: Stick to standard Tailwind utility classes (e.g. flex, grid, md:grid-cols-2, p-4, gap-4, text-sm, font-medium, border, rounded-lg, shadow). Avoid obscure specific colors or spacing values that might not be in the pre-compiled CSS bundle.
-  4. NO TOP-LEVEL H1: The page already displays their name at the top. Start directly with the Hero bio/intro.
-  5. NO MARKDOWN CODEBLOCK WRAPPERS: Output the raw HTML/Markdown directly. Do NOT wrap the entire output in 'html' or 'markdown' tags.
+  CRITICAL INSTRUCTIONS:
+  1. DEDUCE THE ROLE: Analyze the user's projects and writings to determine their precise profession.
+  2. TONE: Professional, confident, and highly engaging. Write in first-person ("I am...").
+  3. LAYOUT TEMPLATE: You MUST structure your output heavily around this raw HTML/Tailwind template. Do not just write markdown text. Use 'class' instead of 'className'.
 
-  Go ahead and generate a highly visual and structured portfolio layout.
+  <div class="flex flex-col gap-16 py-8">
+    <!-- Hero Section -->
+    <section class="flex flex-col items-start space-y-4">
+      <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">[Deduced Role / Catchy Tagline]</h2>
+      <p class="text-lg text-muted-foreground max-w-2xl leading-relaxed">
+        [2-3 sentences summarizing their experience, mission, and unique value based on their projects]
+      </p>
+    </section>
+
+    <!-- Skills Section -->
+    <section>
+      <h3 class="text-xl font-bold mb-4 text-foreground">Core Expertise</h3>
+      <div class="flex flex-wrap gap-2">
+        <!-- Generate these based on their projects -->
+        <span class="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-sm font-medium border border-primary/20">Skill 1</span>
+        <span class="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-sm font-medium border border-primary/20">Skill 2</span>
+      </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <section>
+      <h3 class="text-xl font-bold mb-6 text-foreground">Featured Projects</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Iterate over their top projects -->
+        <a href="/${session.username}/projects/[slug]" class="flex flex-col p-6 rounded-2xl border border-border bg-card hover:bg-muted/50 transition-colors shadow-sm">
+          <h4 class="font-bold text-lg mb-2 text-foreground">Project Name</h4>
+          <p class="text-sm text-muted-foreground line-clamp-3">Description...</p>
+        </a>
+      </div>
+    </section>
+    
+    <!-- Writings/Articles -->
+    <section>
+      <h3 class="text-xl font-bold mb-6 text-foreground">Recent Writings</h3>
+      <div class="grid grid-cols-1 gap-4">
+        <!-- Iterate over their top articles -->
+        <a href="/${session.username}/blogs/[slug]" class="p-5 rounded-2xl border border-border hover:border-primary/50 transition-colors">
+          <h4 class="font-medium text-foreground">Article Title</h4>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  4. NO TOP-LEVEL H1: The page already displays their name at the top. Start with the Hero section.
+  5. OUTPUT FORMAT: Output ONLY the raw HTML/Markdown. Do NOT wrap it in 'html' or 'markdown' codeblocks! Just the raw content so it renders immediately.
   `;
 
   const ai = new GoogleGenAI({});
   
   try {
     const response = await ai.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
+      model: process.env.GEMINI_MODEL || "gemini-1.5-pro",
       contents: prompt,
     });
     
