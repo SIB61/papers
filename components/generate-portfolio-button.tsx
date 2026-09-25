@@ -13,11 +13,15 @@ export function GeneratePortfolioButton({ username }: { username: string }) {
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      await generatePortfolio();
+      const result = await generatePortfolio();
+      if (!result.success) {
+        alert(result.error);
+        return;
+      }
       router.push(`/${username}`);
     } catch (error) {
       console.error(error);
-      alert("Failed to generate portfolio. Make sure GEMINI_API_KEY is set in your environment.");
+      alert((error as any).message || "Failed to generate portfolio.");
     } finally {
       setLoading(false);
     }

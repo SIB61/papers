@@ -57,7 +57,7 @@ export async function generatePortfolio() {
   
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.8-flash",
       contents: prompt,
     });
     
@@ -66,8 +66,8 @@ export async function generatePortfolio() {
       revalidatePath(`/${session.username}`);
       return { success: true };
     }
-    throw new Error("No response from AI");
+    return { success: false, error: "No response from AI" };
   } catch (error: any) {
-    throw new Error(error.message || "Failed to generate portfolio");
+    return { success: false, error: error.message || "Failed to generate portfolio" };
   }
 }
