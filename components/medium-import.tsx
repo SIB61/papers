@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { fetchMediumBlogs, importMediumBlogsBatch } from "@/app/medium-actions";
 import { Loader2, X, CheckSquare, Square, BookOpen } from "lucide-react";
@@ -14,6 +15,8 @@ export function MediumImportButton() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isImporting, setIsImporting] = useState(false);
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const handleOpen = async () => {
     setOpen(true);
@@ -72,7 +75,7 @@ export function MediumImportButton() {
         Import from Medium
       </Button>
 
-      {open && (
+      {open && mounted && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="w-full max-w-lg bg-background border rounded-xl shadow-lg flex flex-col max-h-[85vh]">
             <div className="flex items-center justify-between p-4 border-b">
@@ -151,7 +154,8 @@ export function MediumImportButton() {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
