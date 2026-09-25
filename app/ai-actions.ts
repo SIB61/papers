@@ -57,7 +57,7 @@ export async function generatePortfolio() {
   
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3.8-flash",
+      model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
       contents: prompt,
     });
     
