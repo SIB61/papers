@@ -155,6 +155,12 @@ THEMING SYSTEM (CRITICAL FOR COLORS):
 - For borders, use ONLY: border-border or border-input.
 - Example: Use "bg-muted text-muted-foreground border-border" instead of "bg-gray-100 text-gray-600 border-gray-200".
 
+TYPOGRAPHY CONTEXT:
+- To perfectly match the parent profile page, use these exact classes for major section headings (e.g., Experience, Skills, About): class="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4"
+- For standard body text, do not specify font sizes (let it inherit the default typography).
+- For subtle metadata (dates, small tags), use: class="text-xs text-muted-foreground"
+- Avoid large, oversized headers (text-3xl, text-4xl) inside the bio, as the profile name is already a massive header above it. Stick to the subtle section headings described above or standard HTML <h3> tags for sub-sections.
+
 OUTPUT CONTRACT — return a Markdown fragment, NOT a webpage:
 - Return Markdown with inline HTML blocks if needed (skill badges, intro cards, timeline lists) styled with Tailwind utility classes.
 - Do NOT output a <!DOCTYPE>, <html>, <head>, <body>, <script>, <style>, <link>, or any CDN or <meta> tags.
@@ -170,5 +176,5 @@ How to make it a Beautiful Bio:
 - Treat this content as the main introduction to a person on their profile page.
 - Use clean layouts, such as flexbox rows for skills, subtle background cards for career highlights, and clear typography.
 - Make it look like a modern developer or creator portfolio.
-- Where appropriate, use Tailwind styling like text gradients, subtle borders, rounded corners, or grid layouts to organize the information.
+- Where appropriate, use Tailwind styling like subtle borders, rounded corners, or grid layouts to organize the information.
 - Output well-formed, readable Markdown with embedded Tailwind HTML.`;
