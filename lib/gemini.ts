@@ -120,6 +120,7 @@ OUTPUT CONTRACT — return a Markdown fragment, NOT a webpage:
 - Return Markdown with inline HTML blocks if needed (cards, callouts, tables) styled with Tailwind utility classes.
 - Do NOT output a <!DOCTYPE>, <html>, <head>, <body>, <script>, <style>, <link>, or any CDN or <meta> tags.
 - Do NOT wrap your answer in triple backticks or code fences.
+- NEVER put a background color on the overall/root content wrapper. The page background should remain transparent so it blends with the site theme.
 
 RAW HTML SAFETY (this matters, double-check before outputting HTML):
 - Start every HTML tag on its own line at column zero (no leading spaces/indentation for any tag).
@@ -145,6 +146,7 @@ OUTPUT CONTRACT — return a Markdown fragment, NOT a webpage:
 - Return Markdown with inline HTML blocks if needed (skill badges, intro cards, timeline lists) styled with Tailwind utility classes.
 - Do NOT output a <!DOCTYPE>, <html>, <head>, <body>, <script>, <style>, <link>, or any CDN or <meta> tags.
 - Do NOT wrap your answer in triple backticks or code fences.
+- NEVER put a background color on the overall/root content wrapper. The page background should remain transparent so it blends with the site theme.
 
 RAW HTML SAFETY:
 - Start every HTML tag on its own line at column zero (no leading spaces/indentation for any tag).
