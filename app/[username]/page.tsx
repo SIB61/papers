@@ -56,12 +56,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
       return 0;
     });
 
-  const groupedPosts = visiblePosts.reduce((acc, post) => {
-    const root = post.slug.split('/')[0];
-    if (!acc[root]) acc[root] = [];
-    acc[root].push(post);
-    return acc;
-  }, {} as Record<string, typeof visiblePosts>);
+
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-16 sm:py-24 flex flex-col items-center">
@@ -151,7 +146,16 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
         )}
 
         {/* Index */}
-        <section className="animate-page-in w-full space-y-12" style={{ animationDelay: "120ms" }}>
+        <section className="animate-page-in w-full" style={{ animationDelay: "120ms" }}>
+          <div className="flex items-center justify-between mb-8 border-b border-border/60 pb-4">
+            <h2 className="text-lg font-bold tracking-tight text-foreground">
+              Selected Work
+            </h2>
+            <span className="inline-flex items-center justify-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+              {visiblePosts.length} post{visiblePosts.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+          
           {visiblePosts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border/60 bg-muted/10 p-12 text-center text-muted-foreground">
               Nothing here yet.{" "}
@@ -164,49 +168,35 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
               )}
             </div>
           ) : (
-            Object.entries(groupedPosts).map(([groupName, posts]) => (
-              <div key={groupName} className="flex flex-col">
-                <div className="flex items-center gap-4 mb-4">
-                  <h2 className="text-sm font-bold uppercase tracking-widest text-foreground">
-                    {groupName}
-                  </h2>
-                  <span className="h-px flex-1 bg-border/60"></span>
-                  <span className="text-xs font-mono text-muted-foreground">
-                    {posts.length}
-                  </span>
-                </div>
-                
-                <ul className="flex flex-col">
-                  {posts.map((post) => (
-                    <li 
-                      key={post.id} 
-                      className="group flex items-center justify-between gap-4 py-3 transition-colors"
+            <ul className="mt-2 flex flex-col">
+              {visiblePosts.map((post) => (
+                  <li 
+                    key={post.id} 
+                    className="group flex items-center justify-between gap-4 py-3 transition-colors"
+                  >
+                    <Link
+                      href={`/${user.username}/${post.slug}`}
+                      className="flex flex-1 items-center gap-4 min-w-0"
                     >
-                      <Link
-                        href={`/${user.username}/${post.slug}`}
-                        className="flex flex-1 items-center gap-4 min-w-0"
-                      >
-                        <span className="flex flex-1 items-center gap-3 min-w-0">
-                          <span className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                            {post.title}
-                          </span>
-                          <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                          <span className="h-px flex-1 shrink border-b border-dotted border-border/80 transition-colors group-hover:border-muted-foreground/40 hidden sm:block" />
+                      <span className="flex flex-1 items-center gap-3 min-w-0">
+                        <span className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                          {post.title}
                         </span>
-                        <span className="shrink-0 text-sm text-muted-foreground">
-                          {relativeTime(post.updatedAt)}
-                        </span>
-                      </Link>
-                      {isOwner && (
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                          <DeletePostButton postId={post.id} />
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
+                        <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                        <span className="h-px flex-1 shrink border-b border-dotted border-border/80 transition-colors group-hover:border-muted-foreground/40 hidden sm:block" />
+                      </span>
+                      <span className="shrink-0 text-sm text-muted-foreground">
+                        {relativeTime(post.updatedAt)}
+                      </span>
+                    </Link>
+                    {isOwner && (
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                        <DeletePostButton postId={post.id} />
+                      </div>
+                    )}
+                  </li>
+                ))}
+            </ul>
           )}
         </section>
       </div>
