@@ -165,7 +165,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
               )}
             </div>
           ) : (
-            <ul className="mt-2 flex flex-col gap-1">
+            <ul className="mt-4 divide-y divide-border border-y border-border">
               {visiblePosts.map((post) => {
                   const depth = post.slug.split('/').length - 1;
                   const isRoot = depth === 0;
@@ -173,21 +173,21 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
                   return (
                     <li 
                       key={post.id} 
-                      className="group flex items-center justify-between gap-4 py-2.5 transition-colors"
+                      className="group flex items-center justify-between gap-4 py-4 transition-colors"
                     >
                       <Link
                         href={`/${user.username}/${post.slug}`}
                         className="flex flex-1 items-center gap-4 min-w-0"
                         style={{ marginLeft: `${depth * 1.5}rem` }}
                       >
-                        <span className="flex flex-1 items-center gap-3 min-w-0">
-                          <span className={`truncate transition-colors ${isRoot ? 'font-semibold text-foreground text-[1.05rem]' : 'font-medium text-muted-foreground group-hover:text-foreground'}`}>
+                        <span className="flex flex-1 items-center gap-2 min-w-0">
+                          <span className={`font-medium group-hover:underline underline-offset-4 truncate ${isRoot ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}>
                             {post.title}
                           </span>
-                          {isRoot && <ArrowUpRight className="size-4 shrink-0 text-muted-foreground opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />}
-                          <span className={`h-px flex-1 shrink border-b border-dotted transition-colors hidden sm:block ${isRoot ? 'border-border/80 group-hover:border-muted-foreground/40' : 'border-border/40 group-hover:border-border/80'}`} />
+                          {isRoot && <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />}
+                          <span className={`h-px flex-1 shrink border-b border-dotted transition-colors hidden sm:block ${isRoot ? 'border-border group-hover:border-muted-foreground/40' : 'border-border/40 group-hover:border-border'}`} />
                         </span>
-                        <span className={`shrink-0 text-sm font-mono ${isRoot ? 'text-muted-foreground' : 'text-muted-foreground/60'}`}>
+                        <span className={`hidden shrink-0 text-xs sm:block ${isRoot ? 'text-muted-foreground' : 'text-muted-foreground/60'}`}>
                           {relativeTime(post.updatedAt)}
                         </span>
                       </Link>
