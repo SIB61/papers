@@ -7,6 +7,8 @@ import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2
 import { cn } from "@/lib/utils";
 import { renameRoute, deleteRoute, createPostWithSlugAction, toggleProfileVisibility } from "@/app/actions";
 import { useSidebar } from "@/components/write/sidebar-context";
+import { MediumImportButton } from "@/components/medium-import";
+import { GithubImportButton } from "@/components/github-import";
 
 type Post = {
   id: number;
@@ -328,7 +330,9 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
           )}
         </div>
         <div className="p-3 border-t border-border mt-auto flex flex-col gap-2">
-          <Link href="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
+          <MediumImportButton />
+          <GithubImportButton />
+          <Link href="/" onClick={() => setMobileOpen(false)} className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 mt-2">
             <ChevronRight className="size-3" /> Back to Home
           </Link>
         </div>
