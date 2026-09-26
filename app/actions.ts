@@ -163,7 +163,7 @@ export async function deleteComment(commentId: number) {
   return { ok: true };
 }
 
-export async function beautifyContent(content: string) {
+export async function beautifyContent(content: string, isBio?: boolean) {
   const session = await getSessionUser();
   if (!session) redirect("/login");
 
@@ -171,7 +171,7 @@ export async function beautifyContent(content: string) {
     throw new Error("Write some content before beautifying");
   }
 
-  const beautified = await beautifyMarkdown(content);
+  const beautified = await beautifyMarkdown(content, isBio);
   return { content: beautified };
 }
 

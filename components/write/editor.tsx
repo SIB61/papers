@@ -160,7 +160,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     setBeautifying(true);
     setError(null);
     try {
-      const result = await beautifyContent(content);
+      const result = await beautifyContent(content, slug === "index");
       setContent(result.content);
       setDirty(true);
     } catch (e) {
@@ -168,7 +168,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     } finally {
       setBeautifying(false);
     }
-  }, [beautifying, content]);
+  }, [beautifying, content, slug]);
 
   const save = useCallback(async () => {
     setSaving(true);
