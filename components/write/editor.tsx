@@ -205,11 +205,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     setDirty(true);
   };
 
-  const handleSlug = (value: string) => {
-    titleAuto.current = false;
-    setSlug(value);
-    setDirty(true);
-  };
+
 
   const insertMarkdownImg = useCallback((url: string, alt: string) => {
     const ta = textareaRef.current;
@@ -305,15 +301,6 @@ export function Editor({ post, username }: { post: Post; username: string }) {
             <span className="hidden sm:inline">Posts</span>
           </Link>
 
-          <div className="mx-1 h-5 w-px bg-border" />
-
-          <input
-            value={slug}
-            onChange={(e) => handleSlug(e.target.value)}
-            placeholder="path/to/page"
-            aria-label="Path"
-            className="w-40 min-w-0 rounded-lg border border-border bg-transparent px-2.5 py-1.5 font-mono text-sm outline-none transition-colors focus:border-ring sm:w-64"
-          />
 
           <div className="ml-auto flex items-center gap-2">
 
