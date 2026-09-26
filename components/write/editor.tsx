@@ -385,7 +385,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
         />
         <p className="mt-1 font-mono text-xs text-muted-foreground">{postPath}</p>
 
-        <div className="mt-6 flex items-center justify-between gap-2">
+        <div className="mt-6 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
           <div className="flex items-center overflow-hidden rounded-lg border border-border">
             {(
               [
