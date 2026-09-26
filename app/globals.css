@@ -606,3 +606,15 @@ a {
     break-inside: avoid;
   }
 }
+/* Custom sidebar transition to avoid Tailwind CDN conflicts */
+.custom-mobile-sidebar {
+  transform: translateX(-100%);
+}
+@media (min-width: 768px) {
+  .custom-mobile-sidebar {
+    transform: translateX(0) !important;
+  }
+}
+.custom-mobile-sidebar.is-open {
+  transform: translateX(0);
+}

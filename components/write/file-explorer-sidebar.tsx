@@ -61,6 +61,7 @@ function TreeItem({
   onCreateChild: (parentSlug: string) => void;
   onToggleProfile: (id: number, show: boolean) => void;
 }) {
+  const { setMobileOpen } = useSidebar();
   const [expanded, setExpanded] = useState(level < 1); // Expand top level by default
   const [menuOpen, setMenuOpen] = useState(false);
   const hasChildren = Object.keys(node.children).length > 0;
@@ -86,7 +87,11 @@ function TreeItem({
           </button>
           
           {node.post ? (
-            <Link href={`/write/${node.post.id}`} className="flex items-center gap-1.5 flex-1 overflow-hidden min-w-0">
+            <Link 
+              href={`/write/${node.post.id}`} 
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-1.5 flex-1 overflow-hidden min-w-0"
+            >
               <FileText className="size-3.5 shrink-0 text-muted-foreground" />
               <span className="truncate">{node.name}</span>
               {node.post.showOnProfile && <span title="Pinned to profile"><Star className="size-3 shrink-0 text-amber-500 fill-amber-500 ml-1" /></span>}
@@ -261,15 +266,26 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
 
       {mobileOpen && (
         <div 
-          className="md:hidden fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
+          className="md:hidden fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm cursor-pointer"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setMobileOpen(false);
+          }}
+          onTouchStart={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setMobileOpen(false);
+          }}
+          aria-hidden="true"
         />
       )}
 
       <aside className={cn(
         "w-64 shrink-0 flex flex-col border-r border-border bg-card text-card-foreground h-full",
-        "fixed md:relative inset-y-0 left-0 z-[70] transform transition-transform duration-200 ease-in-out",
-        mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        "fixed md:relative inset-y-0 left-0 z-[70] transition-transform duration-200 ease-in-out",
+        "custom-mobile-sidebar",
+        mobileOpen && "is-open"
       )}>
         <div className="p-4 border-b border-border flex items-center justify-between">
           <span className="font-semibold text-sm">Explorer</span>
@@ -283,6 +299,10 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
             </button>
             <button
               onClick={() => setMobileOpen(false)}
+              onTouchStart={(e) => {
+                e.stopPropagation();
+                setMobileOpen(false);
+              }}
               className="md:hidden p-1 rounded-md hover:bg-muted text-muted-foreground transition-colors"
             >
               <X className="size-4" />

@@ -278,7 +278,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
 
   return (
     <div
-      className="flex min-h-screen flex-col"
+      className="flex h-full flex-col"
       onDragOver={(e) => {
         if (e.dataTransfer.types.includes("Files")) {
           e.preventDefault();
