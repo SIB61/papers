@@ -116,17 +116,23 @@ ABSOLUTE RULES — CONTENT MUST NOT CHANGE:
 - Preserve existing links, images and any raw HTML blocks the author wrote.
 - Do not introduce new claims, statistics, or advice that is not in the source.
 
+THEMING SYSTEM (CRITICAL FOR COLORS):
+- This app uses a strict light/dark mode system (shadcn/ui variables). You MUST NOT use hardcoded colors (e.g. text-gray-900, text-black, bg-white, bg-gray-100).
+- For text, use ONLY: text-foreground (default), text-muted-foreground (secondary), or text-primary.
+- For backgrounds, use ONLY: bg-muted, bg-secondary, bg-accent, or bg-card.
+- For borders, use ONLY: border-border or border-input.
+- Example: Use "bg-muted text-muted-foreground border-border" instead of "bg-gray-100 text-gray-600 border-gray-200".
+
 OUTPUT CONTRACT — return a Markdown fragment, NOT a webpage:
 - Return Markdown with inline HTML blocks if needed (cards, callouts, tables) styled with Tailwind utility classes.
 - Do NOT output a <!DOCTYPE>, <html>, <head>, <body>, <script>, <style>, <link>, or any CDN or <meta> tags.
 - Do NOT wrap your answer in triple backticks or code fences.
 - NEVER put a background color on the overall/root content wrapper. The page background should remain transparent so it blends with the site theme.
 
-RAW HTML SAFETY (this matters, double-check before outputting HTML):
+RAW HTML SAFETY:
 - Start every HTML tag on its own line at column zero (no leading spaces/indentation for any tag).
-- Never leave an empty line between two tags that belong to the same HTML block — an empty line inside an HTML element causes it to be rendered as plain text.
-- Inside any HTML element, never use Markdown markers (like **bold**, *italic*, backticks, or [link](url)) — Markdown does not render inside HTML. Use the real element instead: <strong>, <em>, <code>, <a href="...">.
-- Prefer Markdown when plain Markdown is enough; only use HTML for cards, callouts, and layouts where Markdown cannot express the design.
+- Never leave an empty line between two tags that belong to the same HTML block.
+- Inside any HTML element, never use Markdown markers (**bold**, [link](url)). Use the real element instead: <strong>, <a href="...">.
 
 How to make it Beautiful:
 - Structure the text into clean, logical Markdown: headings, bold/italic emphasis, blockquotes, bullet lists, horizontal rules to separate sections.
@@ -142,6 +148,13 @@ ABSOLUTE RULES — CONTENT MUST NOT CHANGE:
 - Keep the tone and voice of the original. You may only change FORMATTING and DESIGN, never the information.
 - Preserve existing links, images, and any raw HTML blocks the author wrote.
 
+THEMING SYSTEM (CRITICAL FOR COLORS):
+- This app uses a strict light/dark mode system (shadcn/ui variables). You MUST NOT use hardcoded colors (e.g. text-gray-900, text-black, bg-white, bg-gray-100).
+- For text, use ONLY: text-foreground (default), text-muted-foreground (secondary), or text-primary.
+- For backgrounds, use ONLY: bg-muted, bg-secondary, bg-accent, or bg-card.
+- For borders, use ONLY: border-border or border-input.
+- Example: Use "bg-muted text-muted-foreground border-border" instead of "bg-gray-100 text-gray-600 border-gray-200".
+
 OUTPUT CONTRACT — return a Markdown fragment, NOT a webpage:
 - Return Markdown with inline HTML blocks if needed (skill badges, intro cards, timeline lists) styled with Tailwind utility classes.
 - Do NOT output a <!DOCTYPE>, <html>, <head>, <body>, <script>, <style>, <link>, or any CDN or <meta> tags.
@@ -152,7 +165,6 @@ RAW HTML SAFETY:
 - Start every HTML tag on its own line at column zero (no leading spaces/indentation for any tag).
 - Never leave an empty line between two tags that belong to the same HTML block.
 - Inside any HTML element, never use Markdown markers (**bold**, [link](url)). Use the real element instead: <strong>, <a href="...">.
-- Prefer Markdown when plain Markdown is enough; only use HTML for layouts where Markdown cannot express the design.
 
 How to make it a Beautiful Bio:
 - Treat this content as the main introduction to a person on their profile page.
