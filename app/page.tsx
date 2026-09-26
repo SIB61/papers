@@ -6,6 +6,7 @@ import {
   PenLine,
   ShieldCheck,
   Split,
+  IdCard,
 } from "lucide-react";
 import { LandingHeader } from "@/components/landing-header";
 import { Hero } from "@/components/hero";
@@ -37,6 +38,11 @@ const FEATURES = [
     icon: ShieldCheck,
     title: "Private until you publish",
     body: "Drafts are yours alone. Only pages you mark Published are visible to the public.",
+  },
+  {
+    icon: IdCard,
+    title: "Instant Profile Bio",
+    body: "Name a post 'about' and it automatically gets pinned as the beautiful markdown biography on your main profile.",
   },
 ];
 
