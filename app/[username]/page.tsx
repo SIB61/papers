@@ -147,13 +147,10 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
 
         {/* Index */}
         <section className="animate-page-in w-full" style={{ animationDelay: "120ms" }}>
-          <div className="flex items-center justify-between mb-8 border-b border-border/60 pb-4">
-            <h2 className="text-lg font-bold tracking-tight text-foreground">
-              Selected Work
+          <div className="mb-8 border-b border-border/60 pb-4">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/60">
+              INDEX
             </h2>
-            <span className="inline-flex items-center justify-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-              {visiblePosts.length} post{visiblePosts.length !== 1 ? 's' : ''}
-            </span>
           </div>
           
           {visiblePosts.length === 0 ? (
