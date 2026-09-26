@@ -148,7 +148,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
         {/* Index */}
         <section className="animate-page-in w-full" style={{ animationDelay: "120ms" }}>
           <div className="mb-8 border-b border-border/60 pb-4">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/60">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground/80">
               INDEX
             </h2>
           </div>
