@@ -153,24 +153,25 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
               )}
             </div>
           ) : (
-            <ul className="flex flex-col gap-6">
+            <ul className="flex flex-col">
               {visiblePosts.map((post) => (
-                  <li key={post.id} className="group flex items-start sm:items-center justify-between gap-4 p-4 -mx-4 rounded-xl transition-all hover:bg-muted/40">
+                  <li key={post.id} className="group relative border-b border-border/40 last:border-0">
                     <Link
                       href={`/${user.username}/${post.slug}`}
-                      className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 flex-1 min-w-0"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between py-5 gap-3 transition-colors hover:bg-muted/30 -mx-4 px-4 rounded-xl"
                     >
-                      <span className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                      <span className="font-medium text-foreground text-[1.05rem] group-hover:text-primary transition-colors truncate">
                         {post.title}
                       </span>
-                      <span className="h-px flex-1 shrink border-b border-dashed border-border/60 transition-colors group-hover:border-primary/30 hidden sm:block" />
-                      <span className="flex items-center gap-2 shrink-0 text-xs text-muted-foreground">
-                        {relativeTime(post.updatedAt)}
-                        <ArrowUpRight className="size-3.5 opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
-                      </span>
+                      <div className="flex items-center gap-4 shrink-0">
+                        <span className="text-sm text-muted-foreground">
+                          {relativeTime(post.updatedAt)}
+                        </span>
+                        <ArrowUpRight className="size-4 text-muted-foreground opacity-40 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100 group-hover:text-primary" />
+                      </div>
                     </Link>
                     {isOwner && (
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute top-1/2 -translate-y-1/2 right-12 opacity-0 group-hover:opacity-100 transition-opacity">
                         <DeletePostButton postId={post.id} />
                       </div>
                     )}
