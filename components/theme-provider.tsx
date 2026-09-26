@@ -8,8 +8,21 @@ import {
   useMemo,
   useRef,
   useState,
+  memo,
 } from "react";
 import { defaultTheme, isThemeId, themes, type ThemeId, THEME_COOKIE } from "@/lib/themes";
+
+const ThemeScript = memo(() => {
+  const token = `(function(){try{var t=localStorage.getItem("papers.theme")||document.cookie.match(/(^|; )papers.theme=([^;]*)/);if(t){var id=(t&&t[2])||t;if(["paper","contrast","graphite","ivory","noir","ink"].indexOf(id)<0)id="paper";document.documentElement.setAttribute("data-theme",id);}}catch(e){}})();`;
+  return (
+    <script
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{
+        __html: token.replaceAll("papers.theme", THEME_COOKIE),
+      }}
+    />
+  );
+}, () => true);
 
 
 
@@ -81,5 +94,10 @@ export function ThemeProvider({
 
   const value = useMemo(() => ({ theme, themes, setTheme }), [theme, setTheme]);
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      <ThemeScript />
+      {children}
+    </ThemeContext.Provider>
+  );
 }
