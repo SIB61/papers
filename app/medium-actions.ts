@@ -65,7 +65,10 @@ export async function fetchMediumBlogs() {
   return items;
 }
 
-export async function importMediumBlogsBatch(blogs: { title: string; htmlContent: string }[]) {
+export async function importMediumBlogsBatch(
+  blogs: { title: string; htmlContent: string }[],
+  pathPrefix: string = "articles"
+) {
   const session = await getSessionUser();
   if (!session) throw new Error("Unauthorized");
 
@@ -74,10 +77,12 @@ export async function importMediumBlogsBatch(blogs: { title: string; htmlContent
     codeBlockStyle: 'fenced'
   });
 
+  const prefix = pathPrefix.trim().replace(/^\/+|\/+$/g, ""); // remove leading/trailing slashes
+
   await Promise.allSettled(
     blogs.map(async (blog) => {
       let markdown = blog.htmlContent ? turndownService.turndown(blog.htmlContent) : "No content";
-      const slug = normalizeSlug("articles/" + blog.title);
+      const slug = normalizeSlug((prefix ? prefix + "/" : "") + blog.title);
       
       const existing = await db
         .select({ id: posts.id })

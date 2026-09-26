@@ -15,6 +15,7 @@ export function GithubImportButton() {
   const [error, setError] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [isImporting, setIsImporting] = useState(false);
+  const [pathPrefix, setPathPrefix] = useState("projects");
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -50,7 +51,7 @@ export function GithubImportButton() {
     setIsImporting(true);
     try {
       const selectedRepos = repos.filter((r) => selectedIds.has(r.id));
-      const result = await importGithubReposBatch(selectedRepos);
+      const result = await importGithubReposBatch(selectedRepos, pathPrefix || "projects");
       setOpen(false);
       setSelectedIds(new Set());
       router.refresh();
@@ -137,22 +138,37 @@ export function GithubImportButton() {
             </div>
             
             {!loading && repos.length > 0 && (
-              <div className="p-4 border-t flex items-center justify-between bg-muted/20">
-                <div className="text-sm text-muted-foreground">
-                  {selectedIds.size} selected
+              <>
+                <div className="px-4 py-3 border-t bg-muted/10 flex items-center gap-3">
+                  <label className="text-sm font-medium whitespace-nowrap">Save under:</label>
+                  <div className="flex-1 flex items-center gap-1 text-sm bg-background border rounded-md px-3 py-1.5 focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all">
+                    <span className="text-muted-foreground select-none">/</span>
+                    <input 
+                      type="text" 
+                      value={pathPrefix}
+                      onChange={(e) => setPathPrefix(e.target.value)}
+                      placeholder="projects"
+                      className="flex-1 bg-transparent outline-none min-w-[50px]"
+                    />
+                  </div>
                 </div>
-                <Button 
-                  onClick={handleImportBatch} 
-                  disabled={selectedIds.size === 0 || isImporting}
-                  className="min-w-[120px]"
-                >
-                  {isImporting ? (
-                    <><Loader2 className="size-4 mr-2 animate-spin" /> Importing...</>
-                  ) : (
-                    "Import Selected"
-                  )}
-                </Button>
-              </div>
+                <div className="p-4 border-t flex items-center justify-between bg-muted/20">
+                  <div className="text-sm text-muted-foreground">
+                    {selectedIds.size} selected
+                  </div>
+                  <Button 
+                    onClick={handleImportBatch} 
+                    disabled={selectedIds.size === 0 || isImporting}
+                    className="min-w-[120px]"
+                  >
+                    {isImporting ? (
+                      <><Loader2 className="size-4 mr-2 animate-spin" /> Importing...</>
+                    ) : (
+                      "Import Selected"
+                    )}
+                  </Button>
+                </div>
+              </>
             )}
           </div>
         </div>,

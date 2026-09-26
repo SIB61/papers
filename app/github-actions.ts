@@ -65,7 +65,7 @@ export async function fetchGithubRepos() {
 }
 
 
-export async function importGithubRepo(repoFullName: string, repoName: string) {
+export async function importGithubRepo(repoFullName: string, repoName: string, pathPrefix: string = "projects") {
   const session = await getSessionUser();
   if (!session) throw new Error("Unauthorized");
 
@@ -84,7 +84,8 @@ export async function importGithubRepo(repoFullName: string, repoName: string) {
     }
   }
 
-  const slug = normalizeSlug(`projects/${repoName}`);
+  const prefix = pathPrefix.trim().replace(/^\/+|\/+$/g, "");
+  const slug = normalizeSlug((prefix ? prefix + "/" : "") + repoName);
 
   // check if exists
   const existing = await db
@@ -118,9 +119,14 @@ export async function importGithubRepo(repoFullName: string, repoName: string) {
   return { slug, username: session.username };
 }
 
-export async function importGithubReposBatch(repos: { fullName: string; name: string }[]) {
+export async function importGithubReposBatch(
+  repos: { fullName: string; name: string }[],
+  pathPrefix: string = "projects"
+) {
   const session = await getSessionUser();
   if (!session) throw new Error("Unauthorized");
+
+  const prefix = pathPrefix.trim().replace(/^\/+|\/+$/g, "");
 
   await Promise.allSettled(
     repos.map(async (repo) => {
@@ -139,7 +145,7 @@ export async function importGithubReposBatch(repos: { fullName: string; name: st
         }
       }
 
-      const slug = normalizeSlug(`projects/${repo.name}`);
+      const slug = normalizeSlug((prefix ? prefix + "/" : "") + repo.name);
 
       const existing = await db
         .select({ id: posts.id })
