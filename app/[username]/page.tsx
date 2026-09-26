@@ -37,11 +37,24 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
   const isOwner = session?.id === user.id;
 
   const showBio = aboutPost && (aboutPost.status === "published" || isOwner);
-  const visiblePosts = published.filter(p => {
-    if (p.slug === "about") return false;
-    if (p.status !== "published" && !isOwner) return false;
-    return true;
-  });
+  const visiblePosts = published
+    .filter(p => {
+      if (p.slug === "about") return false;
+      if (p.status !== "published" && !isOwner) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      const aParts = a.slug.split('/');
+      const bParts = b.slug.split('/');
+      const len = Math.max(aParts.length, bParts.length);
+      for (let i = 0; i < len; i++) {
+        if (aParts[i] === undefined) return -1;
+        if (bParts[i] === undefined) return 1;
+        const cmp = aParts[i].localeCompare(bParts[i]);
+        if (cmp !== 0) return cmp;
+      }
+      return 0;
+    });
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-16 sm:py-24 flex flex-col items-center">
@@ -154,30 +167,42 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
             </div>
           ) : (
             <ul className="mt-2 flex flex-col">
-              {visiblePosts.map((post) => (
-                  <li key={post.id} className="group flex items-center justify-between gap-4 py-3 transition-colors">
-                    <Link
-                      href={`/${user.username}/${post.slug}`}
-                      className="flex flex-1 items-center gap-4 min-w-0"
+              {visiblePosts.map((post) => {
+                  const depth = post.slug.split('/').length - 1;
+                  return (
+                    <li 
+                      key={post.id} 
+                      className="group flex items-center justify-between gap-4 py-3 transition-colors"
+                      style={{ paddingLeft: `${depth * 1.5}rem` }}
                     >
-                      <span className="flex flex-1 items-center gap-3 min-w-0">
-                        <span className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
-                          {post.title}
+                      <Link
+                        href={`/${user.username}/${post.slug}`}
+                        className="flex flex-1 items-center gap-4 min-w-0"
+                      >
+                        <span className="flex flex-1 items-center gap-3 min-w-0">
+                          {depth > 0 && (
+                            <span className="text-muted-foreground/30 font-mono text-sm select-none">
+                              ↳
+                            </span>
+                          )}
+                          <span className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                            {post.title}
+                          </span>
+                          <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                          <span className="h-px flex-1 shrink border-b border-dotted border-border/80 transition-colors group-hover:border-muted-foreground/40 hidden sm:block" />
                         </span>
-                        <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                        <span className="h-px flex-1 shrink border-b border-dotted border-border/80 transition-colors group-hover:border-muted-foreground/40 hidden sm:block" />
-                      </span>
-                      <span className="shrink-0 text-sm text-muted-foreground">
-                        {relativeTime(post.updatedAt)}
-                      </span>
-                    </Link>
-                    {isOwner && (
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                        <DeletePostButton postId={post.id} />
-                      </div>
-                    )}
-                  </li>
-                ))}
+                        <span className="shrink-0 text-sm text-muted-foreground">
+                          {relativeTime(post.updatedAt)}
+                        </span>
+                      </Link>
+                      {isOwner && (
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                          <DeletePostButton postId={post.id} />
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
             </ul>
           )}
         </section>
