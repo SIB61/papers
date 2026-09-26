@@ -7,6 +7,7 @@ import { isThemeId, defaultTheme } from "@/lib/themes";
 import { TenantHeader } from "@/components/tenant-header";
 import { TenantFooter } from "@/components/tenant-footer";
 import { TailwindCdn } from "@/components/tailwind-cdn";
+import { CustomCursor } from "@/components/custom-cursor";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,7 @@ export default async function UsernameLayout({
         }}
       />
       <TailwindCdn />
+      <CustomCursor />
       <TenantHeader user={user} />
       {children}
       <TenantFooter />
