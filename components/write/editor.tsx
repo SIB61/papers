@@ -8,7 +8,9 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
+import { useSidebar } from "@/components/write/sidebar-context";
 import {
+  Menu,
   ArrowLeft,
   Bold,
   Check,
@@ -81,6 +83,7 @@ const STATUS_LABELS: Record<PostStatus, string> = {
 };
 
 export function Editor({ post, username }: { post: Post; username: string }) {
+  const { setMobileOpen } = useSidebar();
   const [title, setTitle] = useState(post.title);
   const [slug, setSlug] = useState(post.slug);
   const [content, setContent] = useState(post.content);
@@ -287,6 +290,13 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     >
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="md:hidden flex items-center justify-center p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors"
+            title="Open explorer"
+          >
+            <Menu className="size-5" />
+          </button>
           <Link
             href="/write"
             className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

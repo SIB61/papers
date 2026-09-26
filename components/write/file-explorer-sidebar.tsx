@@ -3,9 +3,10 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2, Edit2, Star, EyeOff, Eye, Menu, X } from "lucide-react";
+import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2, Edit2, Star, EyeOff, Eye, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { renameRoute, deleteRoute, createPostWithSlugAction, toggleProfileVisibility } from "@/app/actions";
+import { useSidebar } from "@/components/write/sidebar-context";
 
 type Post = {
   id: number;
@@ -186,12 +187,11 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
   
   const tree = useMemo(() => buildTree(posts), [posts]);
   const [modal, setModal] = useState<ModalState>({ type: "none" });
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { mobileOpen, setMobileOpen } = useSidebar();
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileOpen(false);
-  }, [pathname]);
+  }, [pathname, setMobileOpen]);
 
   const handleRename = (oldSlug: string) => {
     setModal({
@@ -258,12 +258,6 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
 
   return (
     <>
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed bottom-4 right-4 z-50 flex items-center justify-center p-3 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-colors"
-      >
-        <Menu className="size-5" />
-      </button>
 
       {mobileOpen && (
         <div 
