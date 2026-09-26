@@ -54,7 +54,8 @@ function TreeItem({
   onRename,
   onDelete,
   onCreateChild,
-  onToggleProfile
+  onToggleProfile,
+  onToggleInteractions
 }: { 
   node: TreeNode; 
   activeId?: number; 
