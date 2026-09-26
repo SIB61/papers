@@ -15,10 +15,11 @@ import { defaultTheme, isThemeId, themes, type ThemeId, THEME_COOKIE } from "@/l
 const ThemeScript = memo(() => {
   const token = `(function(){try{var t=localStorage.getItem("papers.theme")||document.cookie.match(/(^|; )papers.theme=([^;]*)/);if(t){var id=(t&&t[2])||t;if(["paper","contrast","graphite","ivory","noir","ink"].indexOf(id)<0)id="paper";document.documentElement.setAttribute("data-theme",id);}}catch(e){}})();`;
   return (
-    <script
+    <span
       suppressHydrationWarning
+      style={{ display: "none" }}
       dangerouslySetInnerHTML={{
-        __html: token.replaceAll("papers.theme", THEME_COOKIE),
+        __html: `<script>${token.replaceAll("papers.theme", THEME_COOKIE)}</script>`,
       }}
     />
   );
