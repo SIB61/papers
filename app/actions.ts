@@ -307,6 +307,22 @@ export async function updateSocialLinks(data: { twitter: string; github: string;
   return { ok: true };
 }
 
+export async function updateCV(cvUrl: string) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  await db
+    .update(users)
+    .set({
+      cvUrl,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, session.id));
+
+  revalidatePath(`/${session.username}`);
+  return { ok: true };
+}
+
 export async function updateAccountDetails(data: { name: string; username: string; image: string }) {
   const session = await getSessionUser();
   if (!session) redirect("/login");

@@ -8,6 +8,7 @@ import { SiteThemePicker } from "@/components/site-theme-picker";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { SocialLinksForm } from "@/components/social-links-form";
 import { AccountSettingsForm } from "@/components/account-settings-form";
+import { CVUploadForm } from "@/components/cv-upload-form";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -62,6 +63,14 @@ export default async function SettingsPage() {
                 <p className="text-sm text-muted-foreground">Add links to your social media accounts to display them on your public page.</p>
               </div>
               <SocialLinksForm user={user} />
+            </section>
+
+            <section className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold tracking-tight">Resume / CV</h2>
+                <p className="text-sm text-muted-foreground">Upload your CV to let visitors download it from your profile page.</p>
+              </div>
+              <CVUploadForm cvUrl={user?.cvUrl ?? ""} />
             </section>
 
             <section className="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">

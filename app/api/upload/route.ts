@@ -12,6 +12,7 @@ const ALLOWED_TYPES = new Set([
   "image/gif",
   "image/svg+xml",
   "image/avif",
+  "application/pdf",
 ]);
 
 const EXTENSIONS: Record<string, string> = {
@@ -21,6 +22,7 @@ const EXTENSIONS: Record<string, string> = {
   "image/gif": "gif",
   "image/svg+xml": "svg",
   "image/avif": "avif",
+  "application/pdf": "pdf",
 };
 
 function r2Client(): S3Client | null {
@@ -59,7 +61,7 @@ export async function POST(request: Request) {
   if (!ALLOWED_TYPES.has(file.type)) {
     return NextResponse.json(
       {
-        error: `Unsupported file type "${file.type}". Allowed: jpeg, png, webp, gif, svg, avif`,
+        error: `Unsupported file type "${file.type}". Allowed: jpeg, png, webp, gif, svg, avif, pdf`,
       },
       { status: 400 },
     );

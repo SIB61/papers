@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "cv_url" text DEFAULT '' NOT NULL;
