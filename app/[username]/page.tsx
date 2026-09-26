@@ -26,18 +26,18 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
     .where(and(eq(posts.userId, user.id), eq(posts.showOnProfile, true)))
     .orderBy(desc(posts.updatedAt));
 
-  const indexPost = await db
+  const aboutPost = await db
     .select()
     .from(posts)
-    .where(and(eq(posts.userId, user.id), eq(posts.slug, "index")))
+    .where(and(eq(posts.userId, user.id), eq(posts.slug, "about")))
     .limit(1)
     .then(res => res[0]);
 
   const session = await getSessionUser();
   const isOwner = session?.id === user.id;
 
-  const showBio = indexPost && (indexPost.status === "published" || isOwner);
-  const visiblePosts = published.filter(p => p.slug !== "index" && p.status === "published");
+  const showBio = aboutPost && (aboutPost.status === "published" || isOwner);
+  const visiblePosts = published.filter(p => p.slug !== "about" && p.status === "published");
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5">
@@ -95,12 +95,10 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
 
       {showBio && (
         <section className="animate-page-in pb-16" style={{ animationDelay: "60ms" }}>
-          <div className="prose prose-neutral dark:prose-invert max-w-none">
-            <Markdown>{indexPost.content}</Markdown>
-          </div>
-          {isOwner && indexPost.status === "draft" && (
+          <Markdown>{aboutPost.content}</Markdown>
+          {isOwner && aboutPost.status === "draft" && (
             <p className="mt-4 text-xs text-muted-foreground border border-dashed border-border rounded p-2 inline-block">
-              Your bio (index) is currently a draft and only visible to you.
+              Your bio (about) is currently a draft and only visible to you.
             </p>
           )}
         </section>

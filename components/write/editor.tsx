@@ -160,7 +160,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     setBeautifying(true);
     setError(null);
     try {
-      const result = await beautifyContent(content, slug === "index");
+      const result = await beautifyContent(content, slug === "about");
       setContent(result.content);
       setDirty(true);
     } catch (e) {
