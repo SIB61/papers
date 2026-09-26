@@ -406,6 +406,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
                   mode === m.id
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:text-foreground",
+                  m.id === "split" && "hidden md:flex"
                 )}
               >
                 <m.icon className="size-3.5" />

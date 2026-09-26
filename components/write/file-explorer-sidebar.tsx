@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2, Edit2, Star, EyeOff, Eye } from "lucide-react";
+import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2, Edit2, Star, EyeOff, Eye, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { renameRoute, deleteRoute, createPostWithSlugAction, toggleProfileVisibility } from "@/app/actions";
 
@@ -186,6 +186,12 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
   
   const tree = useMemo(() => buildTree(posts), [posts]);
   const [modal, setModal] = useState<ModalState>({ type: "none" });
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMobileOpen(false);
+  }, [pathname]);
 
   const handleRename = (oldSlug: string) => {
     setModal({
@@ -252,16 +258,42 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
 
   return (
     <>
-      <aside className="w-64 shrink-0 flex flex-col border-r border-border bg-card text-card-foreground">
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="md:hidden fixed bottom-4 right-4 z-50 flex items-center justify-center p-3 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-colors"
+      >
+        <Menu className="size-5" />
+      </button>
+
+      {mobileOpen && (
+        <div 
+          className="md:hidden fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      <aside className={cn(
+        "w-64 shrink-0 flex flex-col border-r border-border bg-card text-card-foreground h-full",
+        "fixed md:relative inset-y-0 left-0 z-[70] transform transition-transform duration-200 ease-in-out",
+        mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+      )}>
         <div className="p-4 border-b border-border flex items-center justify-between">
           <span className="font-semibold text-sm">Explorer</span>
-          <button 
-            onClick={() => handleCreateChild()} 
-            className="p-1 rounded-md hover:bg-muted text-muted-foreground transition-colors"
-            title="Create root post"
-          >
-            <Plus className="size-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={() => handleCreateChild()} 
+              className="p-1 rounded-md hover:bg-muted text-muted-foreground transition-colors"
+              title="Create root post"
+            >
+              <Plus className="size-4" />
+            </button>
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="md:hidden p-1 rounded-md hover:bg-muted text-muted-foreground transition-colors"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto py-2 px-2 flex flex-col gap-0.5">
           {Object.values(tree.children).length === 0 ? (
