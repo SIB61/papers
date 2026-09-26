@@ -41,7 +41,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5">
-      <section className="animate-page-in py-16 sm:py-24">
+      <section className={`animate-page-in pt-16 sm:pt-24 ${showBio ? "pb-8 sm:pb-10" : "pb-16 sm:pb-24"}`}>
         <div className="flex items-center gap-6">
           {user.image && (
             <img src={user.image} alt={user.name || user.username} className="size-20 rounded-full object-cover border-2 border-border" />
