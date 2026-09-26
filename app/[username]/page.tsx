@@ -8,6 +8,8 @@ import { posts, users } from "@/lib/db/schema";
 import { relativeTime } from "@/lib/format";
 import { getSessionUser } from "@/lib/auth";
 import { DeletePostButton } from "@/components/delete-post-button";
+import Markdown from "@/components/markdown";
+
 export const dynamic = "force-dynamic";
 
 export default async function UserHomePage({ params }: PageProps<"/[username]">) {
@@ -24,8 +26,18 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
     .where(and(eq(posts.userId, user.id), eq(posts.showOnProfile, true)))
     .orderBy(desc(posts.updatedAt));
 
+  const indexPost = await db
+    .select()
+    .from(posts)
+    .where(and(eq(posts.userId, user.id), eq(posts.slug, "index")))
+    .limit(1)
+    .then(res => res[0]);
+
   const session = await getSessionUser();
   const isOwner = session?.id === user.id;
+
+  const showBio = indexPost && (indexPost.status === "published" || isOwner);
+  const visiblePosts = published.filter(p => p.slug !== "index" && p.status === "published");
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5">
@@ -42,7 +54,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
           </div>
         </div>
         <p className="mt-4 max-w-md text-muted-foreground">
-          {published.filter((p) => p.status === "published").length} published
+          {visiblePosts.length} published
           {published.some((p) => p.status === "draft") ? " · some drafts in progress" : ""}
         </p>
         {(user.twitter || user.github || user.linkedin || user.website || user.contactEmail || user.whatsapp) && (
@@ -79,14 +91,26 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
             )}
           </div>
         )}
-
       </section>
+
+      {showBio && (
+        <section className="animate-page-in pb-16" style={{ animationDelay: "60ms" }}>
+          <div className="prose prose-neutral dark:prose-invert max-w-none">
+            <Markdown>{indexPost.content}</Markdown>
+          </div>
+          {isOwner && indexPost.status === "draft" && (
+            <p className="mt-4 text-xs text-muted-foreground border border-dashed border-border rounded p-2 inline-block">
+              Your bio (index) is currently a draft and only visible to you.
+            </p>
+          )}
+        </section>
+      )}
 
       <section className="animate-page-in pb-24" style={{ animationDelay: "120ms" }}>
         <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           Index
         </h2>
-        {published.length === 0 ? (
+        {visiblePosts.length === 0 ? (
           <div className="mt-6 rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">
             Nothing here yet.{" "}
             {isOwner ? (
@@ -99,9 +123,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
           </div>
         ) : (
           <ul className="mt-4 divide-y divide-border border-y border-border">
-            {published
-              .filter((p) => p.status === "published")
-              .map((post) => (
+            {visiblePosts.map((post) => (
                 <li key={post.id} className="group flex items-center justify-between gap-4 py-4 transition-colors">
                   <Link
                     href={`/${user.username}/${post.slug}`}
