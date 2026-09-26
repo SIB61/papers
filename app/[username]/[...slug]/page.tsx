@@ -156,16 +156,6 @@ export default async function PostPage({
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-5">
         <article className="animate-page-in mx-auto mt-12 max-w-[680px] pb-24">
-          <nav className="no-print mb-10 flex flex-wrap items-center gap-1 font-mono text-sm text-muted-foreground">
-            <Link href={`/${username}`} className="transition-colors hover:text-foreground">
-              /{username}
-            </Link>
-            <span className="flex items-center gap-1">
-              <span className="text-border">/</span>
-              <span>{slugString}</span>
-            </span>
-          </nav>
-
           <header className="mb-12 border-b border-border pb-8">
             <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
               {post.title}
@@ -209,13 +199,7 @@ export default async function PostPage({
 
           <footer className="no-print mt-20 flex items-center justify-between border-t border-border pt-6 text-xs text-muted-foreground">
             <span>
-              /{username}/{post.slug}
-              {post.id !== 0 && (
-                <>
-                  <span className="mx-2">·</span>
-                  {formatDate(post.updatedAt)}
-                </>
-              )}
+              {post.id !== 0 && formatDate(post.updatedAt)}
             </span>
             <span className="no-print flex items-center gap-2">
               {post.id !== 0 && <DownloadPdfButton />}
