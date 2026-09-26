@@ -179,7 +179,9 @@ function TreeItem({
       
       {expanded && hasChildren && (
         <div className="flex flex-col">
-          {Object.values(node.children).map(child => (
+          {Object.values(node.children)
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(child => (
             <TreeItem 
               key={child.fullSlug} 
               node={child} 
@@ -345,7 +347,9 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
           {Object.values(tree.children).length === 0 ? (
             <div className="p-4 text-xs text-muted-foreground text-center">No posts yet. Click + to create.</div>
           ) : (
-            Object.values(tree.children).map(child => (
+            Object.values(tree.children)
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(child => (
               <TreeItem 
                 key={child.fullSlug} 
                 node={child} 
