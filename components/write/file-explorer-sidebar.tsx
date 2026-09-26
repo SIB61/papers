@@ -197,7 +197,11 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
   const { mobileOpen, setMobileOpen } = useSidebar();
 
   useEffect(() => {
-    setMobileOpen(false);
+    if (pathname === "/write") {
+      setMobileOpen(true);
+    } else {
+      setMobileOpen(false);
+    }
   }, [pathname, setMobileOpen]);
 
   const handleRename = (oldSlug: string) => {

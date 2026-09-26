@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 const SidebarContext = createContext<{
   mobileOpen: boolean;
@@ -8,7 +9,8 @@ const SidebarContext = createContext<{
 }>({ mobileOpen: false, setMobileOpen: () => {} });
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(pathname === "/write");
   return (
     <SidebarContext.Provider value={{ mobileOpen, setMobileOpen }}>
       {children}
