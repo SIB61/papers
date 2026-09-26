@@ -222,7 +222,7 @@ export default async function PostPage({
           </footer>
         </article>
 
-        {post.id !== 0 && (
+        {post.id !== 0 && post.enableInteractions && (
           <PostInteractions
             postId={post.id}
             isOwner={isOwner}

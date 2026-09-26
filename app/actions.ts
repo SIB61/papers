@@ -384,6 +384,19 @@ export async function toggleProfileVisibility(id: number, showOnProfile: boolean
   return { ok: true };
 }
 
+export async function togglePostInteractions(id: number, enableInteractions: boolean) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  await db
+    .update(posts)
+    .set({ enableInteractions, updatedAt: new Date() })
+    .where(and(eq(posts.id, id), eq(posts.userId, session.id)));
+
+  revalidatePath("/");
+  revalidatePath("/write");
+  return { ok: true };
+}
 export async function deleteRoute(slug: string) {
   const session = await getSessionUser();
   if (!session) redirect("/login");

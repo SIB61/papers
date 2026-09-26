@@ -3,9 +3,9 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2, Edit2, Star, EyeOff, Eye, X } from "lucide-react";
+import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2, Edit2, Star, EyeOff, Eye, X, MessageSquare, MessageSquareOff } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { renameRoute, deleteRoute, createPostWithSlugAction, toggleProfileVisibility } from "@/app/actions";
+import { renameRoute, deleteRoute, createPostWithSlugAction, toggleProfileVisibility, togglePostInteractions } from "@/app/actions";
 import { useSidebar } from "@/components/write/sidebar-context";
 import { MediumImportButton } from "@/components/medium-import";
 import { GithubImportButton } from "@/components/github-import";
@@ -16,6 +16,7 @@ type Post = {
   slug: string;
   status: string;
   showOnProfile: boolean;
+  enableInteractions: boolean;
 };
 
 type TreeNode = {
@@ -62,6 +63,7 @@ function TreeItem({
   onDelete: (slug: string) => void;
   onCreateChild: (parentSlug: string) => void;
   onToggleProfile: (id: number, show: boolean) => void;
+  onToggleInteractions: (id: number, enable: boolean) => void;
 }) {
   const { setMobileOpen } = useSidebar();
   const [expanded, setExpanded] = useState(level < 1); // Expand top level by default
@@ -140,6 +142,19 @@ function TreeItem({
                       )}
                     </button>
                   )}
+                  {node.post && (
+                    <button 
+                      type="button"
+                      className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-muted text-left"
+                      onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onToggleInteractions(node.post!.id, !node.post!.enableInteractions); }}
+                    >
+                      {node.post.enableInteractions ? (
+                        <><MessageSquareOff className="size-3" /> Disable Comments</>
+                      ) : (
+                        <><MessageSquare className="size-3" /> Enable Comments</>
+                      )}
+                    </button>
+                  )}
                   <button 
                     type="button"
                     className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-muted text-left"
@@ -173,6 +188,7 @@ function TreeItem({
               onDelete={onDelete}
               onCreateChild={onCreateChild}
               onToggleProfile={onToggleProfile}
+              onToggleInteractions={onToggleInteractions}
             />
           ))}
         </div>
@@ -243,6 +259,15 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
   const handleToggleProfile = async (id: number, show: boolean) => {
     try {
       await toggleProfileVisibility(id, show);
+      router.refresh();
+    } catch (e) {
+      setModal({ type: "alert", title: "Error", message: (e as Error).message });
+    }
+  };
+
+  const handleToggleInteractions = async (id: number, enable: boolean) => {
+    try {
+      await togglePostInteractions(id, enable);
       router.refresh();
     } catch (e) {
       setModal({ type: "alert", title: "Error", message: (e as Error).message });
@@ -329,6 +354,7 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
                 onDelete={handleDelete}
                 onCreateChild={handleCreateChild}
                 onToggleProfile={handleToggleProfile}
+                onToggleInteractions={handleToggleInteractions}
               />
             ))
           )}

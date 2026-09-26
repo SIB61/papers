@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ADD COLUMN "enable_interactions" boolean DEFAULT false NOT NULL;

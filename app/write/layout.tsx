@@ -19,6 +19,7 @@ export default async function WriteLayout({ children }: { children: React.ReactN
       slug: posts.slug,
       status: posts.status,
       showOnProfile: posts.showOnProfile,
+      enableInteractions: posts.enableInteractions,
     })
     .from(posts)
     .where(eq(posts.userId, session.id))
