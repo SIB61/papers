@@ -37,7 +37,11 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
   const isOwner = session?.id === user.id;
 
   const showBio = aboutPost && (aboutPost.status === "published" || isOwner);
-  const visiblePosts = published.filter(p => p.slug !== "about" && p.status === "published");
+  const visiblePosts = published.filter(p => {
+    if (p.slug === "about") return false;
+    if (p.status !== "published" && !isOwner) return false;
+    return true;
+  });
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-16 sm:py-24 flex flex-col items-center">
@@ -149,29 +153,30 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <ul className="flex flex-col gap-6">
               {visiblePosts.map((post) => (
-                  <div key={post.id} className="group relative flex flex-col items-start p-5 sm:p-6 rounded-2xl bg-muted/20 border border-border/40 transition-all hover:bg-muted/50 hover:border-border/80 hover:shadow-sm">
-                    <span className="mb-2 text-xs font-mono font-medium text-muted-foreground/80">
-                      {relativeTime(post.updatedAt)}
-                    </span>
+                  <li key={post.id} className="group flex items-start sm:items-center justify-between gap-4 p-4 -mx-4 rounded-xl transition-all hover:bg-muted/40">
                     <Link
                       href={`/${user.username}/${post.slug}`}
-                      className="font-semibold text-foreground sm:text-lg tracking-tight group-hover:text-primary transition-colors pr-6 line-clamp-2"
+                      className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 flex-1 min-w-0"
                     >
-                      <span className="absolute inset-0" />
-                      {post.title}
+                      <span className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                        {post.title}
+                      </span>
+                      <span className="h-px flex-1 shrink border-b border-dashed border-border/60 transition-colors group-hover:border-primary/30 hidden sm:block" />
+                      <span className="flex items-center gap-2 shrink-0 text-xs text-muted-foreground">
+                        {relativeTime(post.updatedAt)}
+                        <ArrowUpRight className="size-3.5 opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                      </span>
                     </Link>
-                    <ArrowUpRight className="absolute top-6 right-5 size-4 text-muted-foreground opacity-0 -translate-x-2 transition-all group-hover:translate-x-0 group-hover:opacity-100 group-hover:text-primary" />
-                    
                     {isOwner && (
-                      <div className="absolute bottom-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                         <DeletePostButton postId={post.id} />
                       </div>
                     )}
-                  </div>
+                  </li>
                 ))}
-            </div>
+            </ul>
           )}
         </section>
       </div>
