@@ -23,12 +23,7 @@ export async function TenantHeader({ user }: { user: User }) {
         </Link>
 
         <nav className="flex items-center gap-1 text-sm">
-          <Link
-            href={`/${user.username}`}
-            className="rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            index
-          </Link>
+
           {isOwner && (
             <Link
               href="/write"

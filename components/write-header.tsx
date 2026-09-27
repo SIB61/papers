@@ -19,12 +19,7 @@ export async function WriteHeader() {
           )}
         </div>
         <nav className="flex items-center gap-1 text-sm">
-          <Link
-            href="/"
-            className="rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            index
-          </Link>
+
           <span className="mx-1 h-4 w-px bg-border" />
           <ThemeSwitcher />
           <UserMenu

@@ -20,12 +20,7 @@ export async function SiteHeader() {
         </Link>
 
         <nav className="flex items-center gap-1 text-sm">
-          <Link
-            href="/"
-            className="hidden rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:block"
-          >
-            index
-          </Link>
+
           <Link
             href="/write"
             className="rounded-lg px-2.5 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
