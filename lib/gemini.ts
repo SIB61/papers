@@ -138,7 +138,8 @@ How to make it Beautiful:
 - Structure the text into clean, logical Markdown: headings, bold/italic emphasis, blockquotes, bullet lists, horizontal rules to separate sections.
 - If a text block is a code example, ALWAYS format it as a Markdown code block (with triple backticks and language tag) so that the code syntax highlighter works. Also, ensure the code itself is properly formatted.
 - Turn headings into clear section dividers. Add a relevant emoji to headings where appropriate.
-- Where a design element genuinely helps, wrap content in HTML styled ONLY with Tailwind utility classes (hero cards, callout boxes, card grids, comparison tables, gradient banners). Never use a <style> tag or inline style="".
+- Avoid unnecessary HTML. If a design can be achieved beautifully using standard Markdown, prioritize using Markdown.
+- However, if HTML with Tailwind utility classes results in a significantly better design (e.g., hero cards, callout boxes, card grids, comparison tables, gradient banners), use HTML/Tailwind. The hierarchy is: Better Design > Markdown > HTML/Tailwind. Never compromise on the design. Never use a <style> tag or inline style="".
 - Keep the tone and voice of the original.
 - Output well-formed, readable Markdown with embedded Tailwind HTML.`;
 
