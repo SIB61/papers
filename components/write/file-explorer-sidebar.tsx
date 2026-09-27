@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2, Edit2, Star, EyeOff, Eye, X, MessageSquare, MessageSquareOff } from "lucide-react";
@@ -215,6 +215,17 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
   const [modal, setModal] = useState<ModalState>({ type: "none" });
   const { mobileOpen, setMobileOpen } = useSidebar();
 
+  const [sidebarWidth, setSidebarWidth] = useState(256);
+  const widthRef = useRef(sidebarWidth);
+  widthRef.current = sidebarWidth;
+
+  useEffect(() => {
+    const saved = localStorage.getItem("papers.sidebarWidth");
+    if (saved) {
+      setSidebarWidth(Number(saved));
+    }
+  }, []);
+
   useEffect(() => {
     if (pathname === "/write") {
       setMobileOpen(true);
@@ -222,6 +233,23 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
       setMobileOpen(false);
     }
   }, [pathname, setMobileOpen]);
+
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const handleMouseMove = (e: MouseEvent) => {
+      const newWidth = Math.max(200, Math.min(e.clientX, 800));
+      setSidebarWidth(newWidth);
+    };
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      localStorage.setItem("papers.sidebarWidth", widthRef.current.toString());
+      document.body.style.cursor = "default";
+    };
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.body.style.cursor = "col-resize";
+  };
 
   const handleRename = (oldSlug: string) => {
     setModal({
@@ -315,12 +343,16 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
         />
       )}
 
-      <aside className={cn(
-        "w-64 shrink-0 flex flex-col border-r border-border bg-card text-card-foreground h-full",
-        "fixed md:relative inset-y-0 left-0 z-[70] transition-transform duration-200 ease-in-out",
-        "custom-mobile-sidebar",
-        mobileOpen && "is-open"
-      )}>
+      <div 
+        className={cn(
+          "shrink-0 flex border-r border-border bg-card text-card-foreground h-full",
+          "fixed md:relative inset-y-0 left-0 z-[70] transition-transform duration-200 ease-in-out md:transition-none",
+          "custom-mobile-sidebar",
+          mobileOpen && "is-open"
+        )}
+        style={{ width: mobileOpen ? "16rem" : sidebarWidth }}
+      >
+        <aside className="flex flex-col flex-1 min-w-0 h-full relative">
         <div className="p-4 border-b border-border flex items-center justify-between">
           <span className="font-semibold text-sm">Explorer</span>
           <div className="flex items-center gap-1">
@@ -371,7 +403,16 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
             <ChevronRight className="size-3" /> Back to Home
           </Link>
         </div>
-      </aside>
+        </aside>
+        
+        {/* Resizer Handle */}
+        {!mobileOpen && (
+          <div
+            className="w-1 cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 shrink-0 border-l border-transparent hover:border-primary/20 transition-colors"
+            onMouseDown={handleResizeStart}
+          />
+        )}
+      </div>
 
       {modal.type !== "none" && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm">
