@@ -345,12 +345,12 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
 
       <div 
         className={cn(
-          "shrink-0 flex border-r border-border bg-card text-card-foreground h-full",
+          "w-64 shrink-0 flex border-r border-border bg-card text-card-foreground h-full md:w-[var(--sidebar-width)]",
           "fixed md:relative inset-y-0 left-0 z-[70] transition-transform duration-200 ease-in-out md:transition-none",
           "custom-mobile-sidebar",
           mobileOpen && "is-open"
         )}
-        style={{ width: mobileOpen ? "16rem" : sidebarWidth }}
+        style={{ "--sidebar-width": `${sidebarWidth}px` } as React.CSSProperties}
       >
         <aside className="flex flex-col flex-1 min-w-0 h-full relative">
         <div className="p-4 border-b border-border flex items-center justify-between">
@@ -406,12 +406,10 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
         </aside>
         
         {/* Resizer Handle */}
-        {!mobileOpen && (
-          <div
-            className="w-1 cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 shrink-0 border-l border-transparent hover:border-primary/20 transition-colors"
-            onMouseDown={handleResizeStart}
-          />
-        )}
+        <div
+          className="hidden md:block w-1 cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 shrink-0 border-l border-transparent hover:border-primary/20 transition-colors"
+          onMouseDown={handleResizeStart}
+        />
       </div>
 
       {modal.type !== "none" && (
