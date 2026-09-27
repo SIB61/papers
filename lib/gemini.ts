@@ -126,7 +126,7 @@ THEMING SYSTEM (CRITICAL FOR COLORS):
 OUTPUT CONTRACT — return a Markdown fragment, NOT a webpage:
 - Return Markdown with inline HTML blocks if needed (cards, callouts, tables) styled with Tailwind utility classes.
 - Do NOT output a <!DOCTYPE>, <html>, <head>, <body>, <script>, <style>, <link>, or any CDN or <meta> tags.
-- Do NOT wrap your answer in triple backticks or code fences.
+- Do NOT wrap your ENTIRE answer in triple backticks or code fences (using them for code examples within the content is required).
 - NEVER put a background color on the overall/root content wrapper. The page background should remain transparent so it blends with the site theme.
 
 RAW HTML SAFETY:
@@ -136,6 +136,7 @@ RAW HTML SAFETY:
 
 How to make it Beautiful:
 - Structure the text into clean, logical Markdown: headings, bold/italic emphasis, blockquotes, bullet lists, horizontal rules to separate sections.
+- If a text block is a code example, ALWAYS format it as a Markdown code block (with triple backticks and language tag) so that the code syntax highlighter works. Also, ensure the code itself is properly formatted.
 - Turn headings into clear section dividers. Add a relevant emoji to headings where appropriate.
 - Where a design element genuinely helps, wrap content in HTML styled ONLY with Tailwind utility classes (hero cards, callout boxes, card grids, comparison tables, gradient banners). Never use a <style> tag or inline style="".
 - Keep the tone and voice of the original.
