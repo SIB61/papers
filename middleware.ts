@@ -3,18 +3,29 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
+
   const hostname = request.headers.get("host") || "";
 
-  if (hostname === "sabit.com.bd" || hostname === "www.sabit.com.bd") {
-    // If the path already starts with /sabit, redirect to remove it to keep the URL clean
-    // (e.g., sabit.com.bd/sabit/anything -> sabit.com.bd/anything)
-    if (url.pathname === "/sabit" || url.pathname.startsWith("/sabit/")) {
-      url.pathname = url.pathname.replace(/^\/sabit/, "") || "/";
-      return NextResponse.redirect(url);
-    }
+  if (hostname.endsWith(".mappe.page")) {
+    const baseDomain = "mappe.page";
 
-    url.pathname = `/sabit${url.pathname}`;
-    return NextResponse.rewrite(url);
+    // Extract the subdomain (e.g., "sabit.mappe.page" -> "sabit")
+    const subdomain = hostname.replace(`.${baseDomain}`, "");
+
+    // Ignore 'www' subdomain (root domain 'mappe.page' is already skipped by endsWith)
+    if (subdomain && subdomain !== "www") {
+
+      // If the path already starts with the username, redirect to remove it to keep the URL clean
+      // (e.g., sabit.mappe.page/sabit/cv -> sabit.mappe.page/cv)
+      if (url.pathname === `/${subdomain}` || url.pathname.startsWith(`/${subdomain}/`)) {
+        url.pathname = url.pathname.replace(new RegExp(`^\\/${subdomain}`), "") || "/";
+        return NextResponse.redirect(url);
+      }
+
+      // Rewrite the URL to route through your /[username] app directory
+      url.pathname = `/${subdomain}${url.pathname}`;
+      return NextResponse.rewrite(url);
+    }
   }
 
   return NextResponse.next();
