@@ -107,7 +107,7 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: [baseURL, "https://sabit.com.bd"],
+  trustedOrigins: [baseURL, "https://sabit.com.bd", "http://sabit.com.bd"],
   databaseHooks: {
     user: {
       create: {
