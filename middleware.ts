@@ -4,6 +4,8 @@ import type { NextRequest } from "next/server";
 const allowedOrigins = [
   "https://sabit.com.bd",
   "http://sabit.com.bd",
+  "https://www.sabit.com.bd",
+  "http://www.sabit.com.bd",
   "http://localhost:3000",
 ];
 
@@ -42,5 +44,13 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/api/:path*",
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 };
