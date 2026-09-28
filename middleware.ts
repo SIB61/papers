@@ -5,8 +5,14 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const hostname = request.headers.get("host") || "";
 
-  // Rewrite if the host is sabit.com.bd (or www.sabit.com.bd)
   if (hostname === "sabit.com.bd" || hostname === "www.sabit.com.bd") {
+    // If the path already starts with /sabit, redirect to remove it to keep the URL clean
+    // (e.g., sabit.com.bd/sabit/anything -> sabit.com.bd/anything)
+    if (url.pathname === "/sabit" || url.pathname.startsWith("/sabit/")) {
+      url.pathname = url.pathname.replace(/^\/sabit/, "") || "/";
+      return NextResponse.redirect(url);
+    }
+
     url.pathname = `/sabit${url.pathname}`;
     return NextResponse.rewrite(url);
   }
