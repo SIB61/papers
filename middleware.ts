@@ -6,17 +6,17 @@ export function middleware(request: NextRequest) {
 
   const hostname = request.headers.get("host") || "";
 
-  if (hostname.endsWith(".mappe.page")) {
-    const baseDomain = "mappe.page";
+  if (hostname.endsWith(".portfolioo.site")) {
+    const baseDomain = "portfolioo.site";
 
-    // Extract the subdomain (e.g., "sabit.mappe.page" -> "sabit")
+    // Extract the subdomain (e.g., "sabit.portfolioo.site" -> "sabit")
     const subdomain = hostname.replace(`.${baseDomain}`, "");
 
-    // Ignore 'www' subdomain (root domain 'mappe.page' is already skipped by endsWith)
+    // Ignore 'www' subdomain (root domain 'portfolioo.site' is already skipped by endsWith)
     if (subdomain && subdomain !== "www") {
 
       // If the path already starts with the username, redirect to remove it to keep the URL clean
-      // (e.g., sabit.mappe.page/sabit/cv -> sabit.mappe.page/cv)
+      // (e.g., sabit.portfolioo.site/sabit/cv -> sabit.portfolioo.site/cv)
       if (url.pathname === `/${subdomain}` || url.pathname.startsWith(`/${subdomain}/`)) {
         url.pathname = url.pathname.replace(new RegExp(`^\\/${subdomain}`), "") || "/";
         return NextResponse.redirect(url);
