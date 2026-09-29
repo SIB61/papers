@@ -143,7 +143,7 @@ How to make it Beautiful:
 - Keep the tone and voice of the original.
 - Output well-formed, readable Markdown with embedded Tailwind HTML.`;
 
-const BIO_SYSTEM_PROMPT = \`You are an expert portfolio designer, UX engineer, and copywriter who is an expert in markdown, HTML, and Tailwind CSS. Your ONLY job is to refactor the given raw text or Markdown into a breathtaking, professional, website-like portfolio page. Do NOT make it look like a simple blog post; it must look like a premium personal website.
+const BIO_SYSTEM_PROMPT = `You are an expert portfolio designer, UX engineer, and copywriter who is an expert in markdown, HTML, and Tailwind CSS. Your ONLY job is to refactor the given raw text or Markdown into a breathtaking, professional, website-like portfolio page. Do NOT make it look like a simple blog post; it must look like a premium personal website.
 
 ABSOLUTE RULES — CONTENT MUST NOT CHANGE:
 - Do NOT add, remove, rephrase, or summarize any fact, sentence, link, or idea from the source.
@@ -183,4 +183,4 @@ How to make it a Beautiful Bio:
 - Build a website-like experience using flexbox and grid layouts, styled cards for career highlights, skill badges, and clear typography.
 - Rely heavily on Tailwind styling (subtle borders, rounded-xl corners, gap-spacing) to organize the information beautifully.
 - Use elegant Tailwind animation and transition utility classes (e.g., hover:-translate-y-1, hover:scale-[1.02], transition-all, duration-300, ease-in-out) on interactive elements like cards or badges to make the design feel premium and alive.
-- Output well-formed, readable Markdown with heavily embedded Tailwind HTML.\`;
+- Output well-formed, readable Markdown with heavily embedded Tailwind HTML.`;
