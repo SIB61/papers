@@ -107,7 +107,12 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: [baseURL],
+  trustedOrigins: [
+    baseURL,
+    "http://*.localhost:3000",
+    "https://*.portfolioo.site",
+    "https://portfolioo.site"
+  ],
   databaseHooks: {
     user: {
       create: {
