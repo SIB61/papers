@@ -1,7 +1,7 @@
-# papers — a markdown blog
+# portfolioo — a markdown blog
 
 Write everything as markdown. Every page gets a path, and the path *is* the page.
-PV, portfolio, project notes — all in `papers`.
+PV, portfolio, project notes — all in `portfolioo`.
 
 - **Write** at `/write` — full markdown editor with a live preview, WYSIWYG toolbar,
   drag & paste image upload (to Cloudflare R2), and `⌘S` to save.

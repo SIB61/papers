@@ -47,9 +47,33 @@ export async function generateMetadata({
     await db.select().from(users).where(eq(users.username, username)).limit(1)
   )[0];
   if (!user) return {};
+  
   const name = user.name || user.username;
+  const description = `${name}'s blog on portfolioo`;
+  const url = `https://${username}.portfolioo.site`;
+  
   return {
+    metadataBase: new URL("https://portfolioo.site"),
     title: name,
-    description: `${name}'s blog on papers`,
+    description,
+    openGraph: {
+      title: name,
+      description,
+      url,
+      type: "profile",
+      siteName: name,
+      images: user.image ? [{ url: user.image }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: name,
+      description,
+      creator: user.twitter || undefined,
+      images: user.image ? [user.image] : undefined,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
   };
 }

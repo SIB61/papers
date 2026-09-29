@@ -13,13 +13,13 @@ import {
 import { defaultTheme, isThemeId, themes, type ThemeId, THEME_COOKIE } from "@/lib/themes";
 
 const ThemeScript = memo(() => {
-  const token = `(function(){try{var t=localStorage.getItem("papers.theme")||document.cookie.match(/(^|; )papers.theme=([^;]*)/);if(t){var id=(t&&t[2])||t;if(["paper","contrast","graphite","ivory","noir","ink"].indexOf(id)<0)id="paper";document.documentElement.setAttribute("data-theme",id);}}catch(e){}})();`;
+  const token = `(function(){try{var t=localStorage.getItem("portfolioo.theme")||document.cookie.match(/(^|; )portfolioo.theme=([^;]*)/);if(t){var id=(t&&t[2])||t;if(["paper","contrast","graphite","ivory","noir","ink"].indexOf(id)<0)id="paper";document.documentElement.setAttribute("data-theme",id);}}catch(e){}})();`;
   return (
     <span
       suppressHydrationWarning
       style={{ display: "none" }}
       dangerouslySetInnerHTML={{
-        __html: `<script>${token.replaceAll("papers.theme", THEME_COOKIE)}</script>`,
+        __html: `<script>${token.replaceAll("portfolioo.theme", THEME_COOKIE)}</script>`,
       }}
     />
   );

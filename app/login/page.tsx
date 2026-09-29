@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
             className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-4" />
-            back to papers
+            back to portfolioo
           </Link>
           <ThemeSwitcher />
         </div>
@@ -33,7 +33,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           <div className="mx-auto grid size-12 place-items-center rounded-xl border border-foreground text-lg font-bold">
             *
           </div>
-          <h1 className="mt-6 text-3xl font-bold tracking-tight">Your papers desk</h1>
+          <h1 className="mt-6 text-3xl font-bold tracking-tight">Your portfolioo desk</h1>
           <p className="mt-2 text-muted-foreground">
             Sign in to write pages, edit drafts, and keep your workspace private.
           </p>
@@ -57,7 +57,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-5 py-6 text-xs text-muted-foreground">
-          <span>papers · a markdown blog</span>
+          <span>portfolioo · a markdown blog</span>
           <span>{new Date().getFullYear()}</span>
         </div>
       </footer>

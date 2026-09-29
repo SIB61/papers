@@ -22,7 +22,7 @@ const FEATURES = [
   {
     icon: Palette,
     title: "White-label by default",
-    body: "The header is yours, the content is yours. The only paper is the quiet little “powered by papers.io” in the footer.",
+    body: "The header is yours, the content is yours. The only paper is the quiet little “powered by portfolioo.site” in the footer.",
   },
   {
     icon: Split,
@@ -77,7 +77,7 @@ export default function HomePage() {
               href="#features"
               className="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
             >
-              Why papers?
+              Why portfolioo?
             </a>
           </div>
         </section>
@@ -142,7 +142,7 @@ export default function HomePage() {
       </main>
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-5 py-6 text-xs text-muted-foreground">
-          <span>papers · a markdown blog</span>
+          <span>portfolioo · a markdown blog</span>
           <span className="flex items-center gap-4">
             <span>
               You get the header. We get the favicon-free footer.

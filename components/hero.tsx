@@ -42,7 +42,7 @@ export function Hero() {
 
   return (
     <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-      <span className="block text-muted-foreground font-medium">papers.</span>
+      <span className="block text-muted-foreground font-medium">portfolioo.</span>
       <span className="mt-2 block font-mono text-2xl sm:text-3xl">
         /{text}
         <span className="animate-caret text-muted-foreground">▍</span>

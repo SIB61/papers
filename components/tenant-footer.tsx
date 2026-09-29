@@ -7,7 +7,7 @@ export function TenantFooter() {
         <span>
           Powered by{" "}
           <Link href="/" className="underline underline-offset-4 transition-colors hover:text-foreground">
-            papers.io
+            portfolioo.site
           </Link>
         </span>
         <span>{new Date().getFullYear()}</span>

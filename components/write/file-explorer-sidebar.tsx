@@ -220,7 +220,7 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
   widthRef.current = sidebarWidth;
 
   useEffect(() => {
-    const saved = localStorage.getItem("papers.sidebarWidth");
+    const saved = localStorage.getItem("portfolioo.sidebarWidth");
     if (saved) {
       setSidebarWidth(Number(saved));
     }
@@ -243,7 +243,7 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
     const handleMouseUp = () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
-      localStorage.setItem("papers.sidebarWidth", widthRef.current.toString());
+      localStorage.setItem("portfolioo.sidebarWidth", widthRef.current.toString());
       document.body.style.cursor = "default";
     };
     document.addEventListener("mousemove", handleMouseMove);

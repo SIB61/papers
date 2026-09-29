@@ -16,7 +16,7 @@ export async function SiteHeader() {
           <span className="grid size-6 place-items-center rounded-md border border-foreground text-[11px] font-bold text-foreground transition-transform duration-300 group-hover:rotate-6">
             *
           </span>
-          <span>papers</span>
+          <span>portfolioo</span>
         </Link>
 
         <nav className="flex items-center gap-1 text-sm">

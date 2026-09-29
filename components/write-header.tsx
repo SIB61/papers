@@ -11,7 +11,7 @@ export async function WriteHeader() {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5">
         <div className="flex items-center gap-2 text-sm font-semibold tracking-tight">
           <ModalStar className="size-4" />
-          <span>papers / write</span>
+          <span>portfolioo / write</span>
           {session && (
             <span className="ml-1 hidden max-w-40 truncate rounded-md border border-border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:inline">
               {session.name}&apos;s desk

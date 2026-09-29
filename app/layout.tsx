@@ -16,11 +16,40 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://portfolioo.site"),
   title: {
-    default: "papers — a markdown blog",
-    template: "%s · papers",
+    default: "portfolioo — a markdown blog",
+    template: "%s · portfolioo",
   },
   description: "Write everything in markdown. Everything is a page.",
+  keywords: ["markdown", "blog", "portfolio", "writing", "minimalist", "developer"],
+  authors: [{ name: "portfolioo" }],
+  creator: "portfolioo",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://portfolioo.site",
+    title: "portfolioo — a markdown blog",
+    description: "Write everything in markdown. Everything is a page.",
+    siteName: "portfolioo",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "portfolioo — a markdown blog",
+    description: "Write everything in markdown. Everything is a page.",
+    creator: "@portfolioo",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export const viewport: Viewport = {

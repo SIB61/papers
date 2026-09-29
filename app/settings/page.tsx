@@ -86,7 +86,7 @@ export default async function SettingsPage() {
 
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-5 py-6 text-xs text-muted-foreground">
-          <span>papers · site settings</span>
+          <span>portfolioo · site settings</span>
           <span>{new Date().getFullYear()}</span>
         </div>
       </footer>
