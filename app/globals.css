@@ -408,17 +408,17 @@ a {
   border-left: 3px solid var(--foreground);
   color: var(--muted-foreground);
 }
-.blog-body ul {
+.blog-body ul:not([class]) {
   list-style: none;
   margin: 1.25rem 0;
   padding: 0;
 }
-.blog-body ul > li {
+.blog-body ul:not([class]) > li {
   position: relative;
   padding-left: 1.6rem;
   margin: 0.4rem 0;
 }
-.blog-body ul > li::before {
+.blog-body ul:not([class]) > li::before {
   content: "";
   position: absolute;
   left: 0.2rem;
@@ -427,19 +427,19 @@ a {
   height: 0.45rem;
   background: var(--foreground);
 }
-.blog-body ol {
+.blog-body ol:not([class]) {
   list-style: none;
   counter-reset: blog;
   margin: 1.25rem 0;
   padding: 0;
 }
-.blog-body ol > li {
+.blog-body ol:not([class]) > li {
   counter-increment: blog;
   position: relative;
   padding-left: 2.2rem;
   margin: 0.4rem 0;
 }
-.blog-body ol > li::before {
+.blog-body ol:not([class]) > li::before {
   content: counter(blog) ".";
   position: absolute;
   left: 0;
@@ -448,8 +448,8 @@ a {
   font-weight: 600;
   color: var(--muted-foreground);
 }
-.blog-body li > ul,
-.blog-body li > ol {
+.blog-body li > ul:not([class]),
+.blog-body li > ol:not([class]) {
   margin: 0.3rem 0;
 }
 .blog-body hr {
