@@ -49,27 +49,41 @@ export async function generateMetadata({
   if (!user) return {};
   
   const name = user.name || user.username;
-  const description = `${name}'s blog on portfolioo`;
+  const description = `${name}'s Portfolio`;
   const url = `https://${username}.portfolioo.site`;
+  
+  // Try to get a larger Google avatar if it's a Google image URL
+  const highResImage = user.image ? user.image.replace(/=s\d+-c/, '=s512-c') : undefined;
   
   return {
     metadataBase: new URL("https://portfolioo.site"),
     title: name,
     description,
+    icons: highResImage ? {
+      icon: highResImage,
+      apple: highResImage,
+    } : undefined,
     openGraph: {
       title: name,
       description,
       url,
       type: "profile",
       siteName: name,
-      images: user.image ? [{ url: user.image }] : undefined,
+      images: highResImage ? [
+        {
+          url: highResImage,
+          width: 512,
+          height: 512,
+          alt: `${name}'s profile picture`,
+        }
+      ] : undefined,
     },
     twitter: {
-      card: "summary_large_image",
+      card: "summary",
       title: name,
       description,
       creator: user.twitter || undefined,
-      images: user.image ? [user.image] : undefined,
+      images: highResImage ? [highResImage] : undefined,
     },
     robots: {
       index: true,
