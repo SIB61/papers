@@ -7,6 +7,7 @@ import { comments, postLikes, posts, users } from "@/lib/db/schema";
 import { getSessionUser } from "@/lib/auth";
 import Markdown from "@/components/markdown";
 import { DownloadPdfButton } from "@/components/download-pdf-button";
+import { ShareButton } from "@/components/share-button";
 import { PostInteractions } from "@/components/post-interactions";
 import { ArrowUpRight } from "lucide-react";
 import { relativeTime } from "@/lib/format";
@@ -45,6 +46,7 @@ export default async function PostPage({
     .select({
       id: posts.id,
       title: posts.title,
+      publishedTitle: posts.publishedTitle,
       slug: posts.slug,
       updatedAt: posts.updatedAt,
     })
@@ -136,6 +138,9 @@ export default async function PostPage({
     author: { id: row.userId, name: row.name, username: row.username, image: row.image },
   }));
 
+  const displayTitle = (isPreview ? post.title : (post.publishedTitle || post.title));
+  const displayContent = (isPreview ? post.content : (post.publishedContent || post.content));
+
   return (
     <>
       {isPreview && post.id !== 0 && (
@@ -158,11 +163,11 @@ export default async function PostPage({
         <article className="animate-page-in mx-auto mt-12 max-w-[680px] pb-24">
           <header className="mb-12 border-b border-border pb-8">
             <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-              {post.title}
+              {displayTitle}
             </h1>
           </header>
 
-          <Markdown>{post.content}</Markdown>
+          <Markdown>{displayContent}</Markdown>
 
           {childrenRows.length > 0 && (
             <div className="mt-16 animate-page-in">
@@ -181,7 +186,7 @@ export default async function PostPage({
                       >
                         <span className="flex flex-1 items-center gap-2 min-w-0">
                           <span className="font-medium group-hover:underline underline-offset-4 truncate">
-                            {child.title || childRelativeSlug}
+                            {child.publishedTitle || child.title || childRelativeSlug}
                           </span>
                           <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                           <span className="h-px flex-1 shrink border-b border-dotted border-border transition-colors group-hover:border-muted-foreground/40 hidden sm:block" />
@@ -202,6 +207,7 @@ export default async function PostPage({
               {post.id !== 0 && formatDate(post.updatedAt)}
             </span>
             <span className="no-print flex items-center gap-2">
+              <ShareButton title={displayTitle} />
               {post.id !== 0 && <DownloadPdfButton />}
               {isOwner && post.id !== 0 && (
                 <Link
@@ -261,7 +267,7 @@ export async function generateMetadata({
   const slugString = Array.isArray(slug) ? slug.join("/") : slug;
   const post = (
     await db
-      .select({ title: posts.title })
+      .select({ title: posts.title, publishedTitle: posts.publishedTitle })
       .from(posts)
       .innerJoin(users, eq(posts.userId, users.id))
       .where(and(eq(users.username, username), eq(posts.slug, slugString)))
@@ -269,7 +275,7 @@ export async function generateMetadata({
   )[0];
   if (!post) return {};
   return {
-    title: post.title,
+    title: post.publishedTitle || post.title,
     alternates: { canonical: `/${username}/${slugString}` },
   };
 }

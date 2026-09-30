@@ -26,20 +26,20 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
     .where(and(eq(posts.userId, user.id), eq(posts.showOnProfile, true)))
     .orderBy(desc(posts.updatedAt));
 
-  const aboutPost = await db
+  const rootPost = await db
     .select()
     .from(posts)
-    .where(and(eq(posts.userId, user.id), eq(posts.slug, "about")))
+    .where(and(eq(posts.userId, user.id), eq(posts.slug, "")))
     .limit(1)
     .then(res => res[0]);
 
   const session = await getSessionUser();
   const isOwner = session?.id === user.id;
 
-  const showBio = aboutPost && (aboutPost.status === "published" || isOwner);
+  const showBio = rootPost && (rootPost.status === "published" || isOwner);
   const visiblePosts = published
     .filter(p => {
-      if (p.slug === "about") return false;
+      if (p.slug === "") return false;
       if (p.status !== "published" && !isOwner) return false;
       return true;
     })
@@ -132,14 +132,14 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
 
       {/* Bio Content */}
       <div className="w-full space-y-16">
-        {showBio && (
+        {showBio && rootPost && (
           <section className="animate-page-in w-full" style={{ animationDelay: "60ms" }}>
             <div className="prose prose-neutral dark:prose-invert max-w-none text-muted-foreground leading-relaxed">
-              <Markdown>{aboutPost.content}</Markdown>
+              <Markdown>{(isOwner && rootPost.status === "draft") ? rootPost.content : (rootPost.publishedContent || rootPost.content)}</Markdown>
             </div>
-            {isOwner && aboutPost.status === "draft" && (
+            {isOwner && rootPost.status === "draft" && (
               <p className="mt-6 text-xs text-muted-foreground border border-dashed border-border/50 rounded-lg p-3 inline-block bg-muted/20">
-                Your bio (about) is currently a draft and only visible to you.
+                Your home content is currently a draft and only visible to you.
               </p>
             )}
           </section>
@@ -182,7 +182,7 @@ export default async function UserHomePage({ params }: PageProps<"/[username]">)
                       >
                         <span className="flex flex-1 items-center gap-2 min-w-0">
                           <span className={`font-medium group-hover:underline underline-offset-4 truncate ${isRoot ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}>
-                            {post.title}
+                            {(isOwner && post.status === "draft") ? post.title : (post.publishedTitle || post.title)}
                           </span>
                           {isRoot && <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />}
                           <span className={`h-px flex-1 shrink border-b border-dotted transition-colors hidden sm:block ${isRoot ? 'border-border group-hover:border-muted-foreground/40' : 'border-border/40 group-hover:border-border'}`} />

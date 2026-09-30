@@ -4,7 +4,7 @@ import { nextCookies } from "better-auth/next-js";
 import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { account, session, users, verification } from "@/lib/db/schema";
+import { account, session, users, verification, posts } from "@/lib/db/schema";
 
 const baseURL = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 
@@ -119,6 +119,14 @@ export const auth = betterAuth({
         before: async (user) => {
           const username = await uniqueUsername(deriveUsername(user.email));
           return { data: { ...user, username } };
+        },
+        after: async (user) => {
+          await db.insert(posts).values({
+            userId: Number(user.id),
+            title: "Home",
+            slug: "",
+            status: "draft",
+          });
         },
       },
     },

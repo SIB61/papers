@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronRight, ChevronDown, FileText, Folder, MoreVertical, Plus, Trash2, Edit2, Star, EyeOff, Eye, X, MessageSquare, MessageSquareOff } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { renameRoute, deleteRoute, createPostWithSlugAction, toggleProfileVisibility, togglePostInteractions } from "@/app/actions";
+import { renameRoute, deleteRoute, createPostWithSlugAction, toggleProfileVisibility, togglePostInteractions, changeUsername } from "@/app/actions";
 import { useSidebar } from "@/components/write/sidebar-context";
 import { MediumImportButton } from "@/components/medium-import";
 import { GithubImportButton } from "@/components/github-import";
@@ -26,11 +26,22 @@ type TreeNode = {
   children: Record<string, TreeNode>;
 };
 
-function buildTree(posts: Post[]) {
+function buildTree(posts: Post[], username: string) {
   const root: TreeNode = { name: "root", fullSlug: "", children: {} };
+  
+  const rootPost = posts.find(p => p.slug === "");
+  const mainNode: TreeNode = {
+    name: username,
+    fullSlug: "",
+    post: rootPost,
+    children: {}
+  };
+  root.children[""] = mainNode;
+
   for (const post of posts) {
+    if (post.slug === "") continue;
     const parts = post.slug.split("/");
-    let current = root;
+    let current = mainNode;
     let path = "";
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
@@ -118,62 +129,64 @@ function TreeItem({
           >
             <Plus className="size-3.5" />
           </button>
-          <div className="relative">
-            <button 
-              type="button"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setMenuOpen(!menuOpen); }}
-              className="p-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-background"
-            >
-              <MoreVertical className="size-3.5" />
-            </button>
-            {menuOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }} />
-                <div className="absolute right-0 top-full mt-1 z-50 w-36 bg-popover text-popover-foreground border border-border rounded-md shadow-md py-1 text-xs">
-                  {node.post && (
+          {node.fullSlug !== "" && (
+            <div className="relative">
+              <button 
+                type="button"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setMenuOpen(!menuOpen); }}
+                className="p-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-background"
+              >
+                <MoreVertical className="size-3.5" />
+              </button>
+              {menuOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }} />
+                  <div className="absolute right-0 top-full mt-1 z-50 w-36 bg-popover text-popover-foreground border border-border rounded-md shadow-md py-1 text-xs">
+                    {node.post && (
+                      <button 
+                        type="button"
+                        className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-muted text-left"
+                        onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onToggleProfile(node.post!.id, !node.post!.showOnProfile); }}
+                      >
+                        {node.post.showOnProfile ? (
+                          <><EyeOff className="size-3" /> Unpin from profile</>
+                        ) : (
+                          <><Eye className="size-3" /> Pin to profile</>
+                        )}
+                      </button>
+                    )}
+                    {node.post && (
+                      <button 
+                        type="button"
+                        className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-muted text-left"
+                        onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onToggleInteractions(node.post!.id, !node.post!.enableInteractions); }}
+                      >
+                        {node.post.enableInteractions ? (
+                          <><MessageSquareOff className="size-3" /> Disable Comments</>
+                        ) : (
+                          <><MessageSquare className="size-3" /> Enable Comments</>
+                        )}
+                      </button>
+                    )}
                     <button 
                       type="button"
                       className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-muted text-left"
-                      onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onToggleProfile(node.post!.id, !node.post!.showOnProfile); }}
+                      onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onRename(node.fullSlug); }}
                     >
-                      {node.post.showOnProfile ? (
-                        <><EyeOff className="size-3" /> Unpin from profile</>
-                      ) : (
-                        <><Eye className="size-3" /> Pin to profile</>
-                      )}
+                      <Edit2 className="size-3" /> Rename
                     </button>
-                  )}
-                  {node.post && (
                     <button 
                       type="button"
-                      className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-muted text-left"
-                      onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onToggleInteractions(node.post!.id, !node.post!.enableInteractions); }}
+                      className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-destructive/10 text-destructive text-left"
+                      onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onDelete(node.fullSlug); }}
                     >
-                      {node.post.enableInteractions ? (
-                        <><MessageSquareOff className="size-3" /> Disable Comments</>
-                      ) : (
-                        <><MessageSquare className="size-3" /> Enable Comments</>
-                      )}
+                      <Trash2 className="size-3" /> Delete
                     </button>
-                  )}
-                  <button 
-                    type="button"
-                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-muted text-left"
-                    onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onRename(node.fullSlug); }}
-                  >
-                    <Edit2 className="size-3" /> Rename
-                  </button>
-                  <button 
-                    type="button"
-                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-destructive/10 text-destructive text-left"
-                    onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onDelete(node.fullSlug); }}
-                  >
-                    <Trash2 className="size-3" /> Delete
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
       
@@ -206,12 +219,12 @@ type ModalState =
   | { type: "confirm"; title: string; message: string; onConfirm: () => void }
   | { type: "alert"; title: string; message: string };
 
-export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
+export function FileExplorerSidebar({ posts, username }: { posts: Post[], username: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const activeId = pathname.startsWith("/write/") ? parseInt(pathname.split("/")[2]) : undefined;
   
-  const tree = useMemo(() => buildTree(posts), [posts]);
+  const tree = useMemo(() => buildTree(posts, username), [posts, username]);
   const [modal, setModal] = useState<ModalState>({ type: "none" });
   const { mobileOpen, setMobileOpen } = useSidebar();
 
@@ -254,13 +267,17 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
   const handleRename = (oldSlug: string) => {
     setModal({
       type: "prompt",
-      title: "Rename route",
-      defaultValue: oldSlug,
+      title: oldSlug === "" ? "Change username" : "Rename route",
+      defaultValue: oldSlug === "" ? username : oldSlug,
       onConfirm: async (newName) => {
         setModal({ type: "none" });
-        if (!newName || newName === oldSlug) return;
+        if (!newName || newName === oldSlug || newName === username) return;
         try {
-          await renameRoute(oldSlug, newName);
+          if (oldSlug === "") {
+            await changeUsername(newName);
+          } else {
+            await renameRoute(oldSlug, newName);
+          }
         } catch (e) {
           setModal({ type: "alert", title: "Error", message: (e as Error).message });
         }
@@ -345,7 +362,7 @@ export function FileExplorerSidebar({ posts }: { posts: Post[] }) {
 
       <div 
         className={cn(
-          "w-64 shrink-0 flex border-r border-border bg-card text-card-foreground h-full md:w-[var(--sidebar-width)]",
+          "w-[90%] shrink-0 flex border-r border-border bg-card text-card-foreground h-full md:w-[var(--sidebar-width)]",
           "fixed md:relative inset-y-0 left-0 z-[70] transition-transform duration-200 ease-in-out md:transition-none",
           "custom-mobile-sidebar",
           mobileOpen && "is-open"

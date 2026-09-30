@@ -41,8 +41,8 @@ const FEATURES = [
   },
   {
     icon: IdCard,
-    title: "Instant Profile Bio",
-    body: "Name a post 'about' and it automatically gets pinned as the beautiful markdown biography on your main profile.",
+    title: "Your Username, Your Profile",
+    body: "Your root post automatically becomes the main content of your public profile.",
   },
 ];
 

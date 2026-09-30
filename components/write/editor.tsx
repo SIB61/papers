@@ -33,6 +33,7 @@ import {
   Trash2,
   Upload,
   Sparkles,
+  Video,
 } from "lucide-react";
 import { beautifyContent, deletePost, updatePost } from "@/app/actions";
 import Markdown from "@/components/markdown";
@@ -57,6 +58,7 @@ const TOOLS = [
   { key: "ul", label: "Bullet list", icon: List },
   { key: "ol", label: "Numbered list", icon: ListOrdered },
   { key: "hr", label: "Divider", icon: Minus },
+  { key: "youtube", label: "YouTube Video", icon: Video },
 ] as const;
 
 const TOOL_TRANSFORMS: Record<
@@ -75,6 +77,7 @@ const TOOL_TRANSFORMS: Record<
   ul: { before: "- ", after: "", placeholder: "list item" },
   ol: { before: "1. ", after: "", placeholder: "list item" },
   hr: { before: "\n\n---\n\n", after: "", placeholder: "" },
+  youtube: { before: '\n<iframe width="560" height="315" src="https://www.youtube.com/embed/', after: '" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>\n', placeholder: "VIDEO_ID" },
 };
 
 const STATUS_LABELS: Record<PostStatus, string> = {
@@ -87,11 +90,10 @@ export function Editor({ post, username }: { post: Post; username: string }) {
   const [title, setTitle] = useState(post.title);
   const [slug, setSlug] = useState(post.slug);
   const [content, setContent] = useState(post.content);
-  const [status, setStatus] = useState<PostStatus>(post.status);
   const [mode, setMode] = useState<Mode>("write");
 
   const [dirty, setDirty] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [savingAction, setSavingAction] = useState<"draft" | "publish" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -160,7 +162,7 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     setBeautifying(true);
     setError(null);
     try {
-      const result = await beautifyContent(content, slug === "about");
+      const result = await beautifyContent(content, slug === "");
       setContent(result.content);
       setDirty(true);
     } catch (e) {
@@ -170,26 +172,34 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     }
   }, [beautifying, content, slug]);
 
-  const save = useCallback(async () => {
-    setSaving(true);
+  const save = useCallback(async (isPublishing: boolean = false) => {
+    setSavingAction(isPublishing ? "publish" : "draft");
     setError(null);
     try {
       const normalized = normalizeSlug(slug);
-      await updatePost(post.id, { title, slug: normalized, content, status });
+      await updatePost(post.id, { title, slug: normalized, content, isPublishing });
       setDirty(false);
       setLastSaved(Date.now());
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to save");
     } finally {
-      setSaving(false);
+      setSavingAction(null);
     }
-  }, [slug, title, content, status, post.id]);
+  }, [slug, title, content, post.id]);
+
+  useEffect(() => {
+    if (!dirty) return;
+    const timeoutId = setTimeout(() => {
+      void save(false);
+    }, 5000);
+    return () => clearTimeout(timeoutId);
+  }, [dirty, content, title, slug, save]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "s") {
         e.preventDefault();
-        void save();
+        void save(false);
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -268,7 +278,6 @@ export function Editor({ post, username }: { post: Post; username: string }) {
     [uploadFile],
   );
 
-  const statusSegments: PostStatus[] = ["draft", "published"];
   const postPath = `/${username}/${normalizeSlug(slug)}`;
   const deferredContent = useDeferredValue(content);
 
@@ -305,41 +314,26 @@ export function Editor({ post, username }: { post: Post; username: string }) {
           <div className="ml-auto flex items-center gap-2">
 
             <div className="flex items-center overflow-hidden rounded-lg border border-border">
-              {statusSegments.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => {
-                    setStatus(s);
-                    setDirty(true);
-                  }}
-                  className={cn(
-                    "px-3 py-1.5 text-xs font-medium transition-colors",
-                    status === s
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted",
-                  )}
-                >
-                  {STATUS_LABELS[s]}
-                </button>
-              ))}
+              <button
+                type="button"
+                onClick={() => void save(false)}
+                disabled={savingAction !== null || !dirty}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50 text-muted-foreground"
+              >
+                {savingAction === "draft" && <Loader2 className="size-4 animate-spin" />}
+                Save as Draft
+              </button>
+              <div className="w-px self-stretch bg-border" />
+              <button
+                type="button"
+                onClick={() => void save(true)}
+                disabled={savingAction !== null}
+                className="inline-flex items-center gap-1.5 bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-all hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {savingAction === "publish" ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
+                Publish
+              </button>
             </div>
-
-            {dirty && <span className="hidden size-2 rounded-full bg-foreground sm:block" />}
-
-            <button
-              type="button"
-              onClick={() => void save()}
-              disabled={saving || !dirty}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-sm font-medium text-primary-foreground transition-all hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40 active:translate-y-px"
-            >
-              {saving ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Check className="size-4" />
-              )}
-              Save
-            </button>
 
             <Link
               href={`${postPath}?preview=1`}
@@ -381,9 +375,10 @@ export function Editor({ post, username }: { post: Post; username: string }) {
           rows={1}
           placeholder="Untitled"
           aria-label="Title"
+          readOnly={slug === ""}
           className="w-full resize-none overflow-hidden bg-transparent text-3xl font-bold tracking-tight outline-none placeholder:text-muted-foreground/40 sm:text-4xl"
         />
-        <p className="mt-1 font-mono text-xs text-muted-foreground">{postPath}</p>
+        <p className="mt-1 font-mono text-xs text-muted-foreground">{slug === "" ? "/" : `/${normalizeSlug(slug)}`}</p>
 
         <div className="mt-6 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
           <div className="flex items-center overflow-hidden rounded-lg border border-border">

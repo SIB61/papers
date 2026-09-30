@@ -33,10 +33,22 @@ function buildSchema(): Schema {
     attributes[tag] = list;
   }
 
+  attributes["iframe"] = [
+    "src",
+    "width",
+    "height",
+    "frameBorder",
+    "allow",
+    "allowFullScreen",
+    "title",
+    "loading",
+    "scrolling"
+  ];
+
   return {
     ...defaultSchema,
     attributes,
-    tagNames: [...(defaultSchema.tagNames ?? []), "style"],
+    tagNames: [...(defaultSchema.tagNames ?? []), "style", "iframe"],
   };
 }
 

@@ -100,6 +100,8 @@ export const posts = pgTable(
     slug: text("slug").notNull(),
     title: text("title").notNull().default(""),
     content: text("content").notNull().default(""),
+    publishedTitle: text("published_title"),
+    publishedContent: text("published_content"),
     status: text("status", { enum: postStatus }).notNull().default("draft"),
     showOnProfile: boolean("show_on_profile").notNull().default(false),
     enableInteractions: boolean("enable_interactions").notNull().default(false),

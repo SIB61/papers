@@ -20,7 +20,7 @@ export interface PostInput {
   title: string;
   slug: string;
   content: string;
-  status: PostStatus;
+  isPublishing?: boolean;
 }
 
 function canEdit(userId: number, ownerId: number): boolean {
@@ -223,7 +223,6 @@ export async function updatePost(id: number, input: PostInput) {
   }
 
   const slug = normalizeSlug(input.slug);
-  if (!slug) throw new Error("Path cannot be empty");
 
   const clash = await db
     .select({ id: posts.id })
@@ -234,15 +233,22 @@ export async function updatePost(id: number, input: PostInput) {
     throw new Error(`Another post already uses the path /${session.username}/${slug}`);
   }
 
+  const updateData: Partial<typeof posts.$inferInsert> = {
+    title: input.title.trim() || "Untitled",
+    slug,
+    content: input.content,
+    updatedAt: new Date(),
+  };
+
+  if (input.isPublishing) {
+    updateData.status = "published";
+    updateData.publishedTitle = updateData.title;
+    updateData.publishedContent = updateData.content;
+  }
+
   await db
     .update(posts)
-    .set({
-      title: input.title.trim() || "Untitled",
-      slug,
-      content: input.content,
-      status: input.status,
-      updatedAt: new Date(),
-    })
+    .set(updateData)
     .where(eq(posts.id, id));
 
   revalidatePath("/");
@@ -361,6 +367,43 @@ export async function updateAccountDetails(data: { name: string; username: strin
   revalidatePath(`/${newUsername}`);
   
   // if username changes, we also probably want to tell the frontend to redirect
+  return { ok: true, username: newUsername };
+}
+
+export async function changeUsername(newUsernameRaw: string) {
+  const session = await getSessionUser();
+  if (!session) redirect("/login");
+
+  const newUsername = normalizeSlug(newUsernameRaw);
+  if (!newUsername) throw new Error("Username cannot be empty");
+
+  const clash = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.username, newUsername))
+    .limit(1);
+
+  if (clash[0] && clash[0].id !== session.id) {
+    throw new Error(`Username /${newUsername} is already taken.`);
+  }
+
+  const oldUser = (await db.select({ username: users.username }).from(users).where(eq(users.id, session.id)).limit(1))[0];
+
+  await db
+    .update(users)
+    .set({
+      username: newUsername,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, session.id));
+
+  if (oldUser.username !== newUsername) {
+    revalidatePath(`/${oldUser.username}`);
+  }
+  
+  revalidatePath(`/${newUsername}`);
+  revalidatePath("/");
+  revalidatePath("/write");
   return { ok: true, username: newUsername };
 }
 
